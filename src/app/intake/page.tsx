@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 
 export default function IntakeChatPage() {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+  const { messages, input, handleInputChange, append, setInput, isLoading } = useChat({
     maxSteps: 5,
   });
   
@@ -101,9 +101,14 @@ export default function IntakeChatPage() {
       {/* Input Area */}
       <div className="fixed bottom-0 w-full bg-white border-t border-gray-200 p-4 z-10">
         <div className="max-w-3xl mx-auto">
-          <form onSubmit={handleSubmit} className="flex gap-2">
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            if (!input?.trim()) return;
+            append({ role: 'user', content: input });
+            setInput('');
+          }} className="flex gap-2">
             <input
-              value={input}
+              value={input || ''}
               onChange={handleInputChange}
               placeholder="Explain your legal situation..."
               className="flex-1 border border-gray-300 rounded-full px-6 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-sm"
