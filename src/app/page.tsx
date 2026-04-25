@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Search, MapPin, Sparkles, Star, ShieldCheck, CheckCircle2, Scale, Clock, Users, Shield } from 'lucide-react';
+import { Search, MapPin, Sparkles, Star, ShieldCheck, CheckCircle2, Scale, Clock, Users, Shield, ArrowRight } from 'lucide-react';
 
 export default function Home() {
   return (
