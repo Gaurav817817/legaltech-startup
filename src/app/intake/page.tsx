@@ -1,6 +1,6 @@
 'use client';
 
-import { useChat } from 'ai/react';
+import { useChat } from '@ai-sdk/react';
 import { Send, Scale, User, Bot, AlertTriangle, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
@@ -111,7 +111,7 @@ export default function IntakeChatPage() {
             />
             <button 
               type="submit" 
-              disabled={isLoading || !input.trim()}
+              disabled={isLoading || !input?.trim()}
               className="bg-primary-600 text-white rounded-full w-12 h-12 flex items-center justify-center shrink-0 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-md transition-colors"
             >
               <Send className="w-5 h-5 ml-1" />

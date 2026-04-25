@@ -17,6 +17,7 @@ Your job is to:
 3. Once you understand their issue (practice area and location if possible), IMMEDIATELY call the 'recommendLawyers' tool to show them relevant lawyers. Do not ask too many follow-up questions if you have enough to make a recommendation.`,
     messages,
     tools: {
+      // @ts-ignore
       recommendLawyers: tool({
         description: 'Recommend lawyers to the user based on their legal issue and location.',
         parameters: z.object({
@@ -28,9 +29,6 @@ Your job is to:
           
           const supabase = await createClient();
           
-          // Fetch real data from Supabase
-          // In a real app, we would use `.contains('practice_areas', [practiceArea])`
-          // but for MVP we fetch top rated or random and let frontend handle it, or just limit to 3.
           const { data, error } = await supabase
             .from('lawyer_profiles')
             .select('id, first_name, last_name, practice_areas, rating, image_url')
@@ -40,7 +38,6 @@ Your job is to:
             console.error("AI Tool Supabase Error:", error);
           }
 
-          // Format results to match what the chat UI expects
           const results = data?.map(l => ({
             id: l.id,
             name: `${l.first_name} ${l.last_name}`,
