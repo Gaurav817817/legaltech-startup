@@ -45,11 +45,11 @@ export default function Home() {
             </div>
 
             {/* Search Bar Container */}
-            <div className="bg-white p-2 rounded-full shadow-2xl flex flex-col sm:flex-row items-center gap-2 max-w-2xl">
+            <form action="/search" method="GET" className="bg-white p-2 rounded-full shadow-2xl flex flex-col sm:flex-row items-center gap-2 max-w-2xl">
               
               <div className="flex-1 flex items-center bg-transparent px-4 py-2">
                 <Search className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
-                <select className="w-full bg-transparent border-none outline-none text-gray-700 cursor-pointer appearance-none">
+                <select name="q" className="w-full bg-transparent border-none outline-none text-gray-700 cursor-pointer appearance-none">
                   <option value="">All Practice Areas</option>
                   <option value="corporate">Corporate Law</option>
                   <option value="family">Family Law</option>
@@ -64,15 +64,16 @@ export default function Home() {
                 <MapPin className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
                 <input 
                   type="text" 
+                  name="loc"
                   placeholder="City or ZIP code" 
                   className="w-full bg-transparent border-none outline-none text-gray-900 placeholder-gray-500"
                 />
               </div>
 
-              <Link href="/search" className="bg-[#2563eb] hover:bg-blue-700 text-white px-8 py-3.5 rounded-full font-bold transition-colors w-full sm:w-auto text-center">
+              <button type="submit" className="bg-[#2563eb] hover:bg-blue-700 text-white px-8 py-3.5 rounded-full font-bold transition-colors w-full sm:w-auto text-center">
                 Find Lawyers
-              </Link>
-            </div>
+              </button>
+            </form>
 
             {/* AI Assistant Link */}
             <div className="mt-6 text-sm text-blue-200 flex items-center gap-2">

@@ -2,9 +2,10 @@ import { Search as SearchIcon, MapPin, Star, Filter } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/server';
 
-export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string, loc?: string }> }) {
   const params = await searchParams;
   const query = params?.q || '';
+  const loc = params?.loc || '';
 
   const supabase = await createClient();
   
@@ -18,13 +19,18 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     lawyers = [];
   }
 
-  // Basic in-memory filtering for MVP based on query
-  if (query && lawyers) {
-    lawyers = lawyers.filter(l => 
-      l.practice_areas.some((area: string) => area.toLowerCase().includes(query.toLowerCase())) ||
-      l.first_name.toLowerCase().includes(query.toLowerCase()) ||
-      l.last_name.toLowerCase().includes(query.toLowerCase())
-    );
+  // Basic in-memory filtering for MVP based on query and location
+  if ((query || loc) && lawyers) {
+    lawyers = lawyers.filter(l => {
+      const matchesQuery = !query || 
+        l.practice_areas?.some((area: string) => area.toLowerCase().includes(query.toLowerCase())) ||
+        l.first_name?.toLowerCase().includes(query.toLowerCase()) ||
+        l.last_name?.toLowerCase().includes(query.toLowerCase());
+        
+      const matchesLoc = !loc || l.location?.toLowerCase().includes(loc.toLowerCase());
+      
+      return matchesQuery && matchesLoc;
+    });
   }
 
   return (
