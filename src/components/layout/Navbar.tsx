@@ -19,20 +19,20 @@ export default function Navbar() {
 
           {/* Center Navigation Links */}
           <nav className="hidden md:flex space-x-8 items-center">
-            <Link href="#" className="text-gray-500 hover:text-gray-900 font-medium text-[15px] transition-colors">
-              How It Works
+            <Link href="/search" className="text-gray-500 hover:text-gray-900 font-medium text-[15px] transition-colors">
+              Find Lawyers
             </Link>
             <Link href="/practice-areas" className="text-gray-500 hover:text-gray-900 font-medium text-[15px] transition-colors">
               Practice Areas
             </Link>
-            <Link href="#" className="text-gray-500 hover:text-gray-900 font-medium text-[15px] transition-colors">
-              For Lawyers
+            <Link href="/about" className="text-gray-500 hover:text-gray-900 font-medium text-[15px] transition-colors">
+              About Us
             </Link>
             <Link href="#" className="text-gray-500 hover:text-gray-900 font-medium text-[15px] transition-colors">
-              Pricing
+              Legal Resources
             </Link>
             <Link href="/intake" className="text-blue-600 hover:text-blue-700 font-medium text-[15px] transition-colors flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4" /> AI Legal Chat
+              <Sparkles className="w-4 h-4" /> Full AI Chat
             </Link>
           </nav>
 

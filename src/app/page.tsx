@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Search, MapPin, Sparkles, Star, ShieldCheck, CheckCircle2, Scale, Clock, Users, Shield, ArrowRight } from 'lucide-react';
+import HeroChatWidget from '@/components/chat/HeroChatWidget';
 
 export default function Home() {
   return (
@@ -85,49 +86,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Column: Floating Profile Card */}
-          <div className="hidden lg:flex justify-center relative">
-            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[32px] p-6 w-[500px] shadow-2xl">
-              
-              {/* Inner Card */}
-              <div className="bg-white rounded-[24px] p-6 shadow-xl relative overflow-hidden">
-                <div className="flex gap-4 mb-6 relative z-10">
-                  <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center shrink-0 border border-blue-100">
-                    <Shield className="w-8 h-8 text-blue-600" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-xl font-bold text-gray-900">Samantha Reeves</h3>
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100 text-xs font-semibold">
-                        <CheckCircle2 className="w-3 h-3" /> Bar Verified
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-500 mt-1">Corporate Attorney · NY Bar #2847391</p>
-                    <div className="flex items-center gap-1 mt-2">
-                      {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />)}
-                      <span className="font-bold text-gray-900 ml-1 text-sm">4.9</span>
-                      <span className="text-gray-400 text-sm ml-1">(218 reviews)</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Next Available Box */}
-                <div className="bg-gray-50 rounded-xl p-4 mb-4 border border-gray-100 inline-block">
-                  <p className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-1">Next Available</p>
-                  <p className="text-sm font-semibold text-green-600">Today, 3:00 PM EST</p>
-                </div>
-
-                <div className="flex items-center justify-between mt-2 pt-6 border-t border-gray-100">
-                  <button className="bg-[#2563eb] text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors flex items-center gap-2">
-                    Book Consultation <ArrowRight className="w-4 h-4" />
-                  </button>
-                  <div className="text-right">
-                    <p className="text-xs text-gray-500 font-medium">Consultation</p>
-                    <p className="text-2xl font-black text-gray-900">$175</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+          {/* Right Column: Embedded AI Chat Widget */}
+          <div className="hidden lg:flex justify-center relative w-full h-[600px]">
+            <HeroChatWidget />
           </div>
         </div>
 
