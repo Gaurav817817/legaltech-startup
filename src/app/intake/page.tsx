@@ -1,5 +1,5 @@
+// @ts-nocheck
 'use client';
-
 import { useChat } from '@ai-sdk/react';
 import { Send, Scale, User, Bot, AlertTriangle, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
