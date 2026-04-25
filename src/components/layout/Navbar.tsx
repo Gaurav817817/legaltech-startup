@@ -17,7 +17,7 @@ export default function Navbar() {
             <Link href="/intake" className="text-primary-600 hover:text-primary-800 font-bold text-sm transition-colors flex items-center gap-1 bg-primary-50 px-3 py-1.5 rounded-full">
               ✨ AI Intake Chat
             </Link>
-            <Link href="/lawyers" className="text-gray-600 hover:text-primary-800 font-medium text-sm transition-colors">
+            <Link href="/search" className="text-gray-600 hover:text-primary-800 font-medium text-sm transition-colors">
               Find Lawyers
             </Link>
             <Link href="/practice-areas" className="text-gray-600 hover:text-primary-800 font-medium text-sm transition-colors">
