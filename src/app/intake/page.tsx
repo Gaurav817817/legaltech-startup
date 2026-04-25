@@ -3,10 +3,11 @@
 import { useChat } from '@ai-sdk/react';
 import { Send, Scale, User, Bot, AlertTriangle, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function IntakeChatPage() {
-  const { messages, input, handleInputChange, append, setInput, isLoading } = useChat({
+  const [text, setText] = useState('');
+  const { messages, append, isLoading } = useChat({
     maxSteps: 5,
   });
   
@@ -103,20 +104,20 @@ export default function IntakeChatPage() {
         <div className="max-w-3xl mx-auto">
           <form onSubmit={(e) => {
             e.preventDefault();
-            if (!input?.trim()) return;
-            append({ role: 'user', content: input });
-            setInput('');
+            if (!text.trim()) return;
+            append({ role: 'user', content: text });
+            setText('');
           }} className="flex gap-2">
             <input
-              value={input || ''}
-              onChange={handleInputChange}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
               placeholder="Explain your legal situation..."
               className="flex-1 border border-gray-300 rounded-full px-6 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-sm"
               disabled={isLoading}
             />
             <button 
               type="submit" 
-              disabled={isLoading || !input?.trim()}
+              disabled={isLoading || !text.trim()}
               className="bg-primary-600 text-white rounded-full w-12 h-12 flex items-center justify-center shrink-0 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-md transition-colors"
             >
               <Send className="w-5 h-5 ml-1" />
