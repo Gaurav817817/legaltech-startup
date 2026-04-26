@@ -18,25 +18,32 @@ export default function HeroChatWidget() {
   }, [messages]);
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[32px] p-4 sm:p-6 w-full lg:w-[500px] shadow-2xl flex flex-col h-[600px]">
+    <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-[32px] p-4 sm:p-5 w-full lg:w-[380px] shadow-2xl flex flex-col h-[480px]">
       
       {/* Widget Header */}
-      <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
-        <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg">
-          <Sparkles className="w-5 h-5 text-white" />
+      <div className="flex items-center gap-3 mb-4 pb-3 border-b border-white/10">
+        <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg relative">
+          <Sparkles className="w-5 h-5 text-white absolute" />
+          <div className="absolute inset-0 border-2 border-white rounded-full animate-ping opacity-20"></div>
         </div>
         <div>
-          <h3 className="text-lg font-bold text-white">AI Legal Assistant</h3>
-          <p className="text-xs text-blue-200">Ask a question to get matched</p>
+          <h3 className="text-lg font-bold text-white">Personal Assistant</h3>
+          <p className="text-xs text-blue-200">Online & Ready to help</p>
         </div>
       </div>
 
       {/* Chat Messages Area */}
-      <div className="flex-1 overflow-y-auto pr-2 space-y-4 mb-4 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto pr-2 space-y-4 mb-3 custom-scrollbar">
         {messages.length === 0 && (
-          <div className="text-center text-blue-100/60 mt-8">
-            <Bot className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p className="text-sm">Hi! Describe your legal issue and I'll find the best lawyer for you.</p>
+          <div className="text-center mt-4">
+            <div className="bg-white/10 border border-white/20 rounded-2xl p-4 inline-block text-left relative">
+              <Bot className="w-8 h-8 mb-2 text-yellow-400" />
+              <p className="text-sm text-blue-50 leading-relaxed font-medium">
+                👋 Hi there! I'm your personal legal assistant. <br/><br/>
+                Tell me briefly what's going on, and I'll find the perfect lawyer to help you right now.
+              </p>
+              <div className="absolute -bottom-2 left-6 w-4 h-4 bg-white/10 border-r border-b border-white/20 transform rotate-45"></div>
+            </div>
           </div>
         )}
 

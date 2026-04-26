@@ -87,7 +87,7 @@ export default function Home() {
           </div>
 
           {/* Right Column: Embedded AI Chat Widget */}
-          <div className="hidden lg:flex justify-center relative w-full h-[600px]">
+          <div className="flex justify-center relative w-full h-[480px] lg:h-[600px] mt-8 lg:mt-0 z-20">
             <HeroChatWidget />
           </div>
         </div>
