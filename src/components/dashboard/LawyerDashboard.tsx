@@ -11,7 +11,7 @@ export default function LawyerDashboard({ user }: { user: any }) {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-900">Lawyer CRM Dashboard</h2>
-        <button className="bg-primary-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-700">
+        <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
           Update Availability
         </button>
       </div>
@@ -21,7 +21,7 @@ export default function LawyerDashboard({ user }: { user: any }) {
           const Icon = stat.icon;
           return (
             <div key={i} className="bg-white rounded-lg border border-gray-200 p-6 flex items-center shadow-sm">
-              <div className="p-3 rounded-full bg-primary-50 text-primary-600 mr-4">
+              <div className="p-3 rounded-full bg-blue-50 text-blue-600 mr-4">
                 <Icon className="w-6 h-6" />
               </div>
               <div>
@@ -49,7 +49,7 @@ export default function LawyerDashboard({ user }: { user: any }) {
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <button className="text-primary-600 hover:text-primary-800 text-sm font-medium bg-primary-50 px-3 py-1 rounded">View</button>
+                  <button className="text-blue-600 hover:text-blue-800 text-sm font-medium bg-blue-50 px-3 py-1 rounded">View</button>
                 </div>
               </div>
             ))}

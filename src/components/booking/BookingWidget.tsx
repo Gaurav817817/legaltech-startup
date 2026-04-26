@@ -110,13 +110,13 @@ export default function BookingWidget({ lawyer }: { lawyer: any }) {
               key={slot}
               onClick={() => setSelectedSlot(slot)}
               className={`w-full border rounded-lg p-3 text-left transition-all flex items-center justify-between group ${
-                selectedSlot === slot ? 'border-primary-600 ring-2 ring-primary-100 bg-primary-50' : 'border-gray-300 hover:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500'
+                selectedSlot === slot ? 'border-blue-600 ring-2 ring-blue-100 bg-blue-50' : 'border-gray-300 hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500'
               }`}
             >
               <div>
-                <p className={`font-medium group-hover:text-primary-700 ${selectedSlot === slot ? 'text-primary-800' : 'text-gray-900'}`}>{slot}</p>
+                <p className={`font-medium group-hover:text-blue-700 ${selectedSlot === slot ? 'text-blue-800' : 'text-gray-900'}`}>{slot}</p>
               </div>
-              <Calendar className={selectedSlot === slot ? 'text-primary-600' : 'text-gray-400 group-hover:text-primary-600'} />
+              <Calendar className={selectedSlot === slot ? 'text-blue-600' : 'text-gray-400 group-hover:text-blue-600'} />
             </button>
           ))}
         </div>
@@ -127,7 +127,7 @@ export default function BookingWidget({ lawyer }: { lawyer: any }) {
           className={`w-full font-bold py-3 rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2 ${
             !selectedSlot || isProcessing 
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-              : 'bg-primary-600 text-white hover:bg-primary-700'
+              : 'bg-blue-600 text-white hover:bg-blue-700'
           }`}
         >
           {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : <CreditCard className="w-5 h-5" />}

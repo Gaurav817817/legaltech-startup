@@ -59,12 +59,16 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Sidebar Filters (Desktop) */}
           <div className="hidden md:block col-span-1">
-            <div className="bg-white p-5 rounded-lg border border-gray-200 sticky top-24">
+            <form action="/search" method="GET" className="bg-white p-5 rounded-lg border border-gray-200 sticky top-24">
               <h3 className="font-semibold text-gray-900 mb-4">Practice Area</h3>
               <div className="space-y-2 mb-6">
-                {['Corporate Law', 'Family Law', 'Criminal Defense', 'Real Estate'].map(area => (
+                <label className="flex items-center">
+                  <input type="radio" name="q" value="" defaultChecked={!query} className="border-gray-300 text-blue-600 focus:ring-blue-500" />
+                  <span className="ml-2 text-sm text-gray-600">All Areas</span>
+                </label>
+                {['Corporate Law', 'Family Law', 'Criminal Defense', 'Intellectual Property'].map(area => (
                   <label key={area} className="flex items-center">
-                    <input type="checkbox" className="rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+                    <input type="radio" name="q" value={area} defaultChecked={query.toLowerCase() === area.toLowerCase()} className="border-gray-300 text-blue-600 focus:ring-blue-500" />
                     <span className="ml-2 text-sm text-gray-600">{area}</span>
                   </label>
                 ))}
@@ -73,9 +77,13 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               <h3 className="font-semibold text-gray-900 mb-4">Location</h3>
               <div className="relative mb-6">
                 <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input type="text" placeholder="Zip code or city" className="pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-md w-full" />
+                <input type="text" name="loc" defaultValue={loc} placeholder="Zip code or city" className="pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-md w-full focus:ring-blue-500 focus:border-blue-500" />
               </div>
-            </div>
+              
+              <button type="submit" className="w-full bg-blue-50 text-blue-700 font-bold py-2 rounded-md hover:bg-blue-100 transition-colors">
+                Apply Filters
+              </button>
+            </form>
           </div>
 
           {/* Lawyer Cards */}
@@ -108,7 +116,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
                     {lawyer.about}
                   </p>
                   <div className="mt-4 flex gap-3">
-                    <Link href={`/lawyers/${lawyer.id}`} className="bg-primary-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-700 transition-colors">
+                    <Link href={`/lawyers/${lawyer.id}`} className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
                       View Profile
                     </Link>
                   </div>
