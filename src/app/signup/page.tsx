@@ -17,7 +17,7 @@ export default function SignupPage({ searchParams }: { searchParams: Promise<{ e
           </div>
         </div>
         <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-          Join LexConnect
+          Join Amiquz
         </h2>
         <p className="mt-2 text-sm text-gray-600">
           Already have an account?{" "}
@@ -34,48 +34,49 @@ export default function SignupPage({ searchParams }: { searchParams: Promise<{ e
               {params.error}
             </div>
           )}
+
+          {/* Role selector — outside form visually but value passed via hidden input */}
           <div className="mb-8">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">How do you want to use LexConnect?</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">How do you want to use Amiquz?</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <label 
-                className={`relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all ${accountType === 'client' ? 'border-blue-500 ring-2 ring-blue-500 bg-blue-50/30' : 'bg-white border-gray-200 hover:border-blue-300'}`}
+              <button
+                type="button"
+                className={`relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all text-left ${accountType === 'client' ? 'border-blue-500 ring-2 ring-blue-500 bg-blue-50/30' : 'bg-white border-gray-200 hover:border-blue-300'}`}
                 onClick={() => setAccountType('client')}
               >
-                <input type="radio" name="account-type" value="client" className="sr-only" checked={accountType === 'client'} readOnly />
-                <span className="flex flex-1">
-                  <span className="flex flex-col">
-                    <span className={`flex items-center gap-2 text-sm font-bold ${accountType === 'client' ? 'text-blue-700' : 'text-gray-900'}`}>
-                      <User className={`w-5 h-5 ${accountType === 'client' ? 'text-blue-600' : 'text-gray-400'}`} />
-                      I am a Client
-                    </span>
-                    <span className="mt-1 flex items-center text-sm text-gray-500">
-                      Looking to find a lawyer and book consultations.
-                    </span>
+                <span className="flex flex-col">
+                  <span className={`flex items-center gap-2 text-sm font-bold ${accountType === 'client' ? 'text-blue-700' : 'text-gray-900'}`}>
+                    <User className={`w-5 h-5 ${accountType === 'client' ? 'text-blue-600' : 'text-gray-400'}`} />
+                    I am a Client
+                  </span>
+                  <span className="mt-1 text-sm text-gray-500">
+                    Looking to find a lawyer and book consultations.
                   </span>
                 </span>
-              </label>
+              </button>
 
-              <label 
-                className={`relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all ${accountType === 'lawyer' ? 'border-blue-500 ring-2 ring-blue-500 bg-blue-50/30' : 'bg-white border-gray-200 hover:border-blue-300'}`}
+              <button
+                type="button"
+                className={`relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all text-left ${accountType === 'lawyer' ? 'border-blue-500 ring-2 ring-blue-500 bg-blue-50/30' : 'bg-white border-gray-200 hover:border-blue-300'}`}
                 onClick={() => setAccountType('lawyer')}
               >
-                <input type="radio" name="account-type" value="lawyer" className="sr-only" checked={accountType === 'lawyer'} readOnly />
-                <span className="flex flex-1">
-                  <span className="flex flex-col">
-                    <span className={`flex items-center gap-2 text-sm font-bold ${accountType === 'lawyer' ? 'text-blue-700' : 'text-gray-900'}`}>
-                      <Briefcase className={`w-5 h-5 ${accountType === 'lawyer' ? 'text-blue-600' : 'text-gray-400'}`} />
-                      I am a Lawyer
-                    </span>
-                    <span className="mt-1 flex items-center text-sm text-gray-500">
-                      Looking to offer legal services and get leads.
-                    </span>
+                <span className="flex flex-col">
+                  <span className={`flex items-center gap-2 text-sm font-bold ${accountType === 'lawyer' ? 'text-blue-700' : 'text-gray-900'}`}>
+                    <Briefcase className={`w-5 h-5 ${accountType === 'lawyer' ? 'text-blue-600' : 'text-gray-400'}`} />
+                    I am a Lawyer
+                  </span>
+                  <span className="mt-1 text-sm text-gray-500">
+                    Looking to offer legal services and get leads.
                   </span>
                 </span>
-              </label>
+              </button>
             </div>
           </div>
 
           <form className="space-y-6" action={signup}>
+            {/* This hidden input is the fix — it carries the selected role into the form */}
+            <input type="hidden" name="account-type" value={accountType} />
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">First name</label>
