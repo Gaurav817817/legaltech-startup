@@ -1,249 +1,162 @@
-'use client'
+import Link from 'next/link';
+import { Search, MapPin, Sparkles, Star, ShieldCheck, CheckCircle2, Scale, Clock, Users, Shield, ArrowRight } from 'lucide-react';
+import HeroChatWidget from '@/components/chat/HeroChatWidget';
 
-import { useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
-import { Briefcase, MapPin, DollarSign, BookOpen, Globe, User, CheckCircle } from 'lucide-react'
-
-const PRACTICE_AREA_OPTIONS = [
-  'Corporate Law', 'Family Law', 'Criminal Defense', 'Intellectual Property',
-  'Real Estate', 'Employment Law', 'Tax Law', 'Immigration', 'Civil Litigation',
-  'Startups & Tech', 'Divorce', 'Consumer Rights', 'Banking & Finance', 'Other'
-]
-
-const LANGUAGE_OPTIONS = ['English', 'Hindi', 'Tamil', 'Telugu', 'Kannada', 'Marathi', 'Bengali', 'Gujarati', 'Punjabi', 'Malayalam']
-
-export default function LawyerProfileSetup() {
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
-
-  const [form, setForm] = useState({
-    title: '',
-    location: '',
-    about: '',
-    consultation_fee: '',
-    practice_areas: [] as string[],
-    languages: [] as string[],
-    education: '',
-  })
-
-  const toggleItem = (field: 'practice_areas' | 'languages', value: string) => {
-    setForm(prev => ({
-      ...prev,
-      [field]: prev[field].includes(value)
-        ? prev[field].filter(v => v !== value)
-        : [...prev[field], value]
-    }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-
-    if (form.practice_areas.length === 0) {
-      setError('Please select at least one practice area.')
-      setLoading(false)
-      return
-    }
-
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      setError('You must be logged in.')
-      setLoading(false)
-      return
-    }
-
-    const { error: upsertError } = await supabase
-      .from('lawyer_profiles')
-      .upsert({
-        id: user.id,
-        first_name: user.user_metadata?.first_name || '',
-        last_name: user.user_metadata?.last_name || '',
-        title: form.title,
-        location: form.location,
-        about: form.about,
-        consultation_fee: form.consultation_fee,
-        practice_areas: form.practice_areas,
-        languages: form.languages,
-        education: form.education ? [form.education] : [],
-        rating: 0,
-        reviews: 0,
-      })
-
-    if (upsertError) {
-      setError('Failed to save profile: ' + upsertError.message)
-      setLoading(false)
-      return
-    }
-
-    setSuccess(true)
-    setTimeout(() => router.push('/dashboard'), 2000)
-  }
-
-  if (success) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900">Profile Saved!</h2>
-          <p className="text-gray-500 mt-2">You're now visible to clients. Redirecting to dashboard...</p>
-        </div>
-      </div>
-    )
-  }
-
+export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold text-gray-900">Complete Your Lawyer Profile</h1>
-          <p className="text-gray-500 mt-2">This is how clients will find and contact you on Amiquz.</p>
+    <div className="flex flex-col min-h-screen bg-white">
+      
+      {/* Hero Section */}
+      <section className="relative bg-[#1e3a8a] text-white pt-24 pb-48 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+          
+          {/* Left Column: Text & Search */}
+          <div>
+            {/* Top Badge */}
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 mb-8 text-sm text-blue-100">
+              <Sparkles className="w-4 h-4 text-yellow-400" />
+              AI-Powered Legal Matching — Find your lawyer in minutes
+            </div>
+
+            {/* Headline */}
+            <h1 className="text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 leading-[1.1]">
+              Find Trusted Legal <br />
+              Help, <span className="text-blue-300">Faster Than Ever.</span>
+            </h1>
+
+            {/* Subheadline */}
+            <p className="text-lg text-blue-100 mb-8 max-w-xl leading-relaxed">
+              Connect with verified lawyers for your personal or business legal needs. Transparent pricing, real reviews, instant booking — all in one place.
+            </p>
+
+            {/* Trust Row */}
+            <div className="flex items-center gap-6 mb-12 text-sm font-medium text-blue-50">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-blue-300" />
+                10,000+ Verified Lawyers
+              </div>
+              <div className="flex items-center gap-2">
+                <Star className="w-4 h-4 text-yellow-400" />
+                4.8 Avg. Rating
+              </div>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-green-400" />
+                Bar Verified
+              </div>
+            </div>
+
+            {/* Search Bar Container */}
+            <form action="/search" method="GET" className="bg-white p-2 rounded-full shadow-2xl flex flex-col sm:flex-row items-center gap-2 max-w-2xl">
+              
+              <div className="flex-1 flex items-center bg-transparent px-4 py-2">
+                <Search className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+                <select name="q" className="w-full bg-transparent border-none outline-none text-gray-700 cursor-pointer appearance-none">
+                  <option value="">All Practice Areas</option>
+                  <option value="corporate">Corporate Law</option>
+                  <option value="family">Family Law</option>
+                  <option value="criminal">Criminal Defense</option>
+                  <option value="ip">Intellectual Property</option>
+                </select>
+              </div>
+
+              <div className="w-px h-8 bg-gray-200 hidden sm:block"></div>
+
+              <div className="flex-1 flex items-center bg-transparent px-4 py-2">
+                <MapPin className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+                <input 
+                  type="text" 
+                  name="loc"
+                  placeholder="City or ZIP code" 
+                  className="w-full bg-transparent border-none outline-none text-gray-900 placeholder-gray-500"
+                />
+              </div>
+
+              <button type="submit" className="bg-[#2563eb] hover:bg-blue-700 text-white px-8 py-3.5 rounded-full font-bold transition-colors w-full sm:w-auto text-center">
+                Find Lawyers
+              </button>
+            </form>
+
+            {/* AI Assistant Link */}
+            <div className="mt-6 text-sm text-blue-200 flex items-center gap-2">
+              Not sure where to start? 
+              <Link href="/intake" className="text-white font-bold flex items-center gap-1 hover:text-blue-300 transition-colors">
+                <Sparkles className="w-4 h-4 text-yellow-400" />
+                Try AI Legal Assistant <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Right Column: Embedded AI Chat Widget */}
+          <div className="flex justify-center relative w-full h-[480px] lg:h-[600px] mt-8 lg:mt-0 z-20">
+            <HeroChatWidget />
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-6">
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
-              {error}
+        {/* Wavy Bottom Separator */}
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
+          <svg className="relative block w-full h-[120px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,120.22,192,108.41,234.39,100.2,277.6,83.08,321.39,56.44Z" className="fill-white"></path>
+          </svg>
+        </div>
+      </section>
+
+      {/* Stats Strip */}
+      <section className="bg-white py-12 px-4 border-b border-gray-100 relative z-20 -mt-16">
+        <div className="max-w-[1400px] mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 text-center">
+          
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+              <CheckCircle2 className="w-6 h-6 text-blue-600" />
             </div>
-          )}
-
-          {/* Title / Designation */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              <User className="inline w-4 h-4 mr-1 text-blue-500" />
-              Your Title / Designation
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. Senior Partner at XYZ Law Firm"
-              value={form.title}
-              onChange={e => setForm({ ...form, title: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <h4 className="text-xl font-bold text-gray-900">10,000+</h4>
+            <p className="text-sm text-gray-500 mt-1">Verified Lawyers</p>
           </div>
 
-          {/* Location */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              <MapPin className="inline w-4 h-4 mr-1 text-blue-500" />
-              City / Location
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. Bengaluru, Karnataka"
-              value={form.location}
-              onChange={e => setForm({ ...form, location: e.target.value })}
-              required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Consultation Fee */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              <DollarSign className="inline w-4 h-4 mr-1 text-blue-500" />
-              Consultation Fee
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. ₹2000 / hr  or  ₹500 / 30 min"
-              value={form.consultation_fee}
-              onChange={e => setForm({ ...form, consultation_fee: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* About */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              <BookOpen className="inline w-4 h-4 mr-1 text-blue-500" />
-              About You
-            </label>
-            <textarea
-              rows={4}
-              placeholder="Briefly describe your experience, specialization, and what clients can expect..."
-              value={form.about}
-              onChange={e => setForm({ ...form, about: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-            />
-          </div>
-
-          {/* Education */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Education / Bar Enrollment
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. LLB, National Law School Bengaluru"
-              value={form.education}
-              onChange={e => setForm({ ...form, education: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Practice Areas */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              <Briefcase className="inline w-4 h-4 mr-1 text-blue-500" />
-              Practice Areas <span className="text-red-500">*</span>
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {PRACTICE_AREA_OPTIONS.map(area => (
-                <button
-                  key={area}
-                  type="button"
-                  onClick={() => toggleItem('practice_areas', area)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                    form.practice_areas.includes(area)
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400'
-                  }`}
-                >
-                  {area}
-                </button>
-              ))}
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center mb-4">
+              <Star className="w-6 h-6 text-orange-500" />
             </div>
+            <h4 className="text-xl font-bold text-gray-900">4.8 / 5</h4>
+            <p className="text-sm text-gray-500 mt-1">Average Rating</p>
           </div>
 
-          {/* Languages */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              <Globe className="inline w-4 h-4 mr-1 text-blue-500" />
-              Languages You Work In
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {LANGUAGE_OPTIONS.map(lang => (
-                <button
-                  key={lang}
-                  type="button"
-                  onClick={() => toggleItem('languages', lang)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                    form.languages.includes(lang)
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400'
-                  }`}
-                >
-                  {lang}
-                </button>
-              ))}
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mb-4">
+              <ShieldCheck className="w-6 h-6 text-green-600" />
             </div>
+            <h4 className="text-xl font-bold text-gray-900">256-bit</h4>
+            <p className="text-sm text-gray-500 mt-1">Secure Payments</p>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-3 rounded-xl transition-colors shadow-md"
-          >
-            {loading ? 'Saving Profile...' : 'Save & Go to Dashboard →'}
-          </button>
-        </form>
-      </div>
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center mb-4">
+              <Scale className="w-6 h-6 text-purple-600" />
+            </div>
+            <h4 className="text-xl font-bold text-gray-900">50+</h4>
+            <p className="text-sm text-gray-500 mt-1">Practice Areas</p>
+          </div>
+
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+              <Clock className="w-6 h-6 text-blue-600" />
+            </div>
+            <h4 className="text-xl font-bold text-gray-900">&lt; 2 hrs</h4>
+            <p className="text-sm text-gray-500 mt-1">Avg. Response Time</p>
+          </div>
+
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-4">
+              <Users className="w-6 h-6 text-red-500" />
+            </div>
+            <h4 className="text-xl font-bold text-gray-900">85,000+</h4>
+            <p className="text-sm text-gray-500 mt-1">Clients Served</p>
+          </div>
+
+        </div>
+      </section>
+
+      <div className="py-32"></div>
+
     </div>
-  )
+  );
 }
