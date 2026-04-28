@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LegalLink - Find the Right Lawyer",
-  description: "Connect with verified top-tier legal professionals for your personal and business needs.",
+  title: "Amiquz - Find the Right Lawyer",
+  description: "Connect with verified legal professionals for your personal and business needs. Powered by Amiquz.",
 };
 
 export default function RootLayout({
