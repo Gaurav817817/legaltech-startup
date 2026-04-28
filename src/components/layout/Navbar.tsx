@@ -16,7 +16,7 @@ export default function Navbar() {
             <Link href="/" className="flex items-center gap-2 group">
               <AlignJustify className="w-6 h-6 text-blue-600 transition-colors" />
               <span className="font-extrabold text-2xl text-[#0f172a] tracking-tight">
-                Lex<span className="text-blue-600">Connect</span>
+                Ami<span className="text-blue-600">quz</span>
               </span>
             </Link>
           </div>
