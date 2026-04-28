@@ -6,15 +6,27 @@ import ClientDashboard from '@/components/dashboard/ClientDashboard'
 export default async function DashboardPage() {
   const supabase = await createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
     redirect('/login')
   }
 
   const role = user.user_metadata?.role || 'client'
+
+  // If lawyer, check if they've completed their profile
+  if (role === 'lawyer') {
+    const { data: profile } = await supabase
+      .from('lawyer_profiles')
+      .select('id')
+      .eq('id', user.id)
+      .single()
+
+    // No profile yet — send them to fill it in
+    if (!profile) {
+      redirect('/lawyer-profile-setup')
+    }
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full bg-gray-50 min-h-screen">
