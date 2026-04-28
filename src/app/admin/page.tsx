@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 // ----------------------------------------------------------------
 // IMPORTANT: Set your own email below. Only you can access this page.
 // ----------------------------------------------------------------
-const ADMIN_EMAIL = 'gaurav28696@email.com' // <-- CHANGE THIS to your email
+const ADMIN_EMAIL = 'founders@amiquz.com' // <-- CHANGE THIS to your email
 
 export default async function AdminPage() {
   const supabase = await createClient()
