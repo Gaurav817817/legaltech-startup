@@ -32,7 +32,7 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">For Lawyers</h3>
             <ul className="space-y-4">
-              <li><Link href="/for-lawyers" className="text-gray-400 hover:text-white text-sm transition-colors">Join LexConnect</Link></li>
+              <li><Link href="/for-lawyers" className="text-gray-400 hover:text-white text-sm transition-colors">Join Amiquz</Link></li>
               <li><Link href="/pricing" className="text-gray-400 hover:text-white text-sm transition-colors">Pricing</Link></li>
               <li><Link href="/legal-resources" className="text-gray-400 hover:text-white text-sm transition-colors">Lawyer Resources</Link></li>
             </ul>
@@ -53,7 +53,7 @@ export default function Footer() {
         {/* Bottom Strip */}
         <div className="mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} LexConnect. All rights reserved.
+            &copy; {new Date().getFullYear()} Amiquz. All rights reserved.
           </p>
         </div>
       </div>
