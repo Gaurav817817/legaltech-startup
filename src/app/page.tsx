@@ -1,162 +1,116 @@
-import Link from 'next/link';
-import { Search, MapPin, Sparkles, Star, ShieldCheck, CheckCircle2, Scale, Clock, Users, Shield, ArrowRight } from 'lucide-react';
-import HeroChatWidget from '@/components/chat/HeroChatWidget';
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
 
-export default function Home() {
+// ----------------------------------------------------------------
+// IMPORTANT: Set your own email below. Only you can access this page.
+// ----------------------------------------------------------------
+const ADMIN_EMAIL = 'your@email.com' // <-- CHANGE THIS to your email
+
+export default async function AdminPage() {
+  const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user || user.email !== ADMIN_EMAIL) {
+    redirect('/')
+  }
+
+  // Fetch all users using the service role isn't available here,
+  // so we read from lawyer_profiles + auth metadata trick:
+  // We'll show lawyer_profiles for lawyers, and note clients separately.
+  const { data: lawyers } = await supabase
+    .from('lawyer_profiles')
+    .select('*')
+    .order('created_at', { ascending: false })
+
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      
-      {/* Hero Section */}
-      <section className="relative bg-[#1e3a8a] text-white pt-24 pb-48 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
-          
-          {/* Left Column: Text & Search */}
-          <div>
-            {/* Top Badge */}
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 mb-8 text-sm text-blue-100">
-              <Sparkles className="w-4 h-4 text-yellow-400" />
-              AI-Powered Legal Matching — Find your lawyer in minutes
-            </div>
+    <div className="max-w-6xl mx-auto px-4 py-10">
+      <div className="mb-8">
+        <h1 className="text-3xl font-extrabold text-gray-900">Amiquz Admin Panel</h1>
+        <p className="text-gray-500 mt-1">Only visible to you. Manage your platform from here.</p>
+      </div>
 
-            {/* Headline */}
-            <h1 className="text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 leading-[1.1]">
-              Find Trusted Legal <br />
-              Help, <span className="text-blue-300">Faster Than Ever.</span>
-            </h1>
-
-            {/* Subheadline */}
-            <p className="text-lg text-blue-100 mb-8 max-w-xl leading-relaxed">
-              Connect with verified lawyers for your personal or business legal needs. Transparent pricing, real reviews, instant booking — all in one place.
-            </p>
-
-            {/* Trust Row */}
-            <div className="flex items-center gap-6 mb-12 text-sm font-medium text-blue-50">
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-blue-300" />
-                10,000+ Verified Lawyers
-              </div>
-              <div className="flex items-center gap-2">
-                <Star className="w-4 h-4 text-yellow-400" />
-                4.8 Avg. Rating
-              </div>
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-green-400" />
-                Bar Verified
-              </div>
-            </div>
-
-            {/* Search Bar Container */}
-            <form action="/search" method="GET" className="bg-white p-2 rounded-full shadow-2xl flex flex-col sm:flex-row items-center gap-2 max-w-2xl">
-              
-              <div className="flex-1 flex items-center bg-transparent px-4 py-2">
-                <Search className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
-                <select name="q" className="w-full bg-transparent border-none outline-none text-gray-700 cursor-pointer appearance-none">
-                  <option value="">All Practice Areas</option>
-                  <option value="corporate">Corporate Law</option>
-                  <option value="family">Family Law</option>
-                  <option value="criminal">Criminal Defense</option>
-                  <option value="ip">Intellectual Property</option>
-                </select>
-              </div>
-
-              <div className="w-px h-8 bg-gray-200 hidden sm:block"></div>
-
-              <div className="flex-1 flex items-center bg-transparent px-4 py-2">
-                <MapPin className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
-                <input 
-                  type="text" 
-                  name="loc"
-                  placeholder="City or ZIP code" 
-                  className="w-full bg-transparent border-none outline-none text-gray-900 placeholder-gray-500"
-                />
-              </div>
-
-              <button type="submit" className="bg-[#2563eb] hover:bg-blue-700 text-white px-8 py-3.5 rounded-full font-bold transition-colors w-full sm:w-auto text-center">
-                Find Lawyers
-              </button>
-            </form>
-
-            {/* AI Assistant Link */}
-            <div className="mt-6 text-sm text-blue-200 flex items-center gap-2">
-              Not sure where to start? 
-              <Link href="/intake" className="text-white font-bold flex items-center gap-1 hover:text-blue-300 transition-colors">
-                <Sparkles className="w-4 h-4 text-yellow-400" />
-                Try AI Legal Assistant <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Right Column: Embedded AI Chat Widget */}
-          <div className="flex justify-center relative w-full h-[480px] lg:h-[600px] mt-8 lg:mt-0 z-20">
-            <HeroChatWidget />
-          </div>
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+          <p className="text-sm text-gray-500 font-medium">Total Lawyers</p>
+          <p className="text-4xl font-bold text-blue-600 mt-1">{lawyers?.length ?? 0}</p>
         </div>
-
-        {/* Wavy Bottom Separator */}
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
-          <svg className="relative block w-full h-[120px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,120.22,192,108.41,234.39,100.2,277.6,83.08,321.39,56.44Z" className="fill-white"></path>
-          </svg>
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+          <p className="text-sm text-gray-500 font-medium">Platform</p>
+          <p className="text-2xl font-bold text-gray-800 mt-1">Amiquz</p>
         </div>
-      </section>
-
-      {/* Stats Strip */}
-      <section className="bg-white py-12 px-4 border-b border-gray-100 relative z-20 -mt-16">
-        <div className="max-w-[1400px] mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 text-center">
-          
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-4">
-              <CheckCircle2 className="w-6 h-6 text-blue-600" />
-            </div>
-            <h4 className="text-xl font-bold text-gray-900">10,000+</h4>
-            <p className="text-sm text-gray-500 mt-1">Verified Lawyers</p>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center mb-4">
-              <Star className="w-6 h-6 text-orange-500" />
-            </div>
-            <h4 className="text-xl font-bold text-gray-900">4.8 / 5</h4>
-            <p className="text-sm text-gray-500 mt-1">Average Rating</p>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mb-4">
-              <ShieldCheck className="w-6 h-6 text-green-600" />
-            </div>
-            <h4 className="text-xl font-bold text-gray-900">256-bit</h4>
-            <p className="text-sm text-gray-500 mt-1">Secure Payments</p>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center mb-4">
-              <Scale className="w-6 h-6 text-purple-600" />
-            </div>
-            <h4 className="text-xl font-bold text-gray-900">50+</h4>
-            <p className="text-sm text-gray-500 mt-1">Practice Areas</p>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-4">
-              <Clock className="w-6 h-6 text-blue-600" />
-            </div>
-            <h4 className="text-xl font-bold text-gray-900">&lt; 2 hrs</h4>
-            <p className="text-sm text-gray-500 mt-1">Avg. Response Time</p>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-4">
-              <Users className="w-6 h-6 text-red-500" />
-            </div>
-            <h4 className="text-xl font-bold text-gray-900">85,000+</h4>
-            <p className="text-sm text-gray-500 mt-1">Clients Served</p>
-          </div>
-
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+          <p className="text-sm text-gray-500 font-medium">To see all users</p>
+          <a
+            href="https://supabase.com/dashboard"
+            target="_blank"
+            className="text-blue-600 underline text-sm mt-1 block font-medium"
+          >
+            Open Supabase → Authentication → Users
+          </a>
         </div>
-      </section>
+      </div>
 
-      <div className="py-32"></div>
-
+      {/* Lawyers Table */}
+      <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+          <h2 className="font-bold text-gray-900 text-lg">Registered Lawyers</h2>
+          <span className="text-sm text-gray-500">{lawyers?.length ?? 0} total</span>
+        </div>
+        {lawyers && lawyers.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 border-b border-gray-100">
+                <tr>
+                  <th className="text-left px-6 py-3 font-semibold text-gray-600">Name</th>
+                  <th className="text-left px-6 py-3 font-semibold text-gray-600">Practice Areas</th>
+                  <th className="text-left px-6 py-3 font-semibold text-gray-600">Location</th>
+                  <th className="text-left px-6 py-3 font-semibold text-gray-600">Fee</th>
+                  <th className="text-left px-6 py-3 font-semibold text-gray-600">Joined</th>
+                  <th className="text-left px-6 py-3 font-semibold text-gray-600">Profile</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {lawyers.map((lawyer) => (
+                  <tr key={lawyer.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 font-medium text-gray-900">
+                      {lawyer.first_name} {lawyer.last_name}
+                      {lawyer.title && (
+                        <p className="text-xs text-gray-400 font-normal">{lawyer.title}</p>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-gray-600">
+                      {lawyer.practice_areas?.join(', ') || '—'}
+                    </td>
+                    <td className="px-6 py-4 text-gray-600">{lawyer.location || '—'}</td>
+                    <td className="px-6 py-4 text-gray-600">{lawyer.consultation_fee || '—'}</td>
+                    <td className="px-6 py-4 text-gray-400 text-xs">
+                      {new Date(lawyer.created_at).toLocaleDateString('en-IN', {
+                        day: 'numeric', month: 'short', year: 'numeric'
+                      })}
+                    </td>
+                    <td className="px-6 py-4">
+                      <a
+                        href={`/lawyers/${lawyer.id}`}
+                        className="text-blue-600 hover:underline font-medium"
+                        target="_blank"
+                      >
+                        View →
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="p-10 text-center text-gray-400">
+            <p className="font-medium">No lawyers have completed their profile yet.</p>
+            <p className="text-sm mt-1">When a lawyer signs up and fills their profile, they'll appear here.</p>
+          </div>
+        )}
+      </div>
     </div>
-  );
+  )
 }
