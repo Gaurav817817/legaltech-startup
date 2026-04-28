@@ -14,7 +14,7 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center gap-2 group">
-             <img src="/amiquz-logo.svg" alt="Amiquz" height="64" style={{height: '44px', width: 'auto'}} />
+             <img src="/amiquz-logo.svg" alt="Amiquz" height="64" style={{height: '64px', width: 'auto'}} />
             </Link>
           </div>
 
