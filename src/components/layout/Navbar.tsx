@@ -12,26 +12,21 @@ export default function Navbar() {
         <div className="flex justify-between h-20 items-center">
           
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center gap-2 group">
-              <AlignJustify className="w-6 h-6 text-blue-600 transition-colors" />
-             <div className="flex items-center gap-2">
-  <div style={{width:'44px', height:'44px', borderRadius:'10px', background:'#1d4ed8', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0}}>
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <line x1="16" y1="7" x2="16" y2="24" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-      <line x1="9" y1="24" x2="23" y2="24" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-      <line x1="4" y1="10" x2="28" y2="13" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-      <line x1="4" y1="10" x2="2" y2="17" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
-      <path d="M0 17 Q4 21 8 17" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
-      <line x1="28" y1="13" x2="30" y2="20" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
-      <path d="M26 20 Q30 24 34 20" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
-      <circle cx="30" cy="20" r="2" fill="#93c5fd"/>
-    </svg>
-  </div>
-  <span style={{fontWeight:800, fontSize:'22px', color:'#0f172a', letterSpacing:'-0.5px'}}>Ami<span style={{color:'#1d4ed8'}}>quz</span></span>
-</div>
-            </Link>
-          </div>
+         <Link href="/" className="flex items-center gap-2 group">
+  <svg width="220" height="50" viewBox="0 0 220 50" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="48" height="48" rx="10" fill="#1d4ed8"/>
+    <line x1="24" y1="11" x2="24" y2="36" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+    <line x1="15" y1="36" x2="33" y2="36" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+    <line x1="6" y1="15" x2="42" y2="19" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+    <line x1="6" y1="15" x2="3" y2="24" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+    <path d="M0 24 Q5 28 10 24" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+    <line x1="42" y1="19" x2="45" y2="29" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+    <path d="M39 29 Q44 34 49 29" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+    <circle cx="45" cy="28" r="2" fill="#93c5fd"/>
+    <text x="58" y="28" fontFamily="system-ui, sans-serif" fontSize="22" fontWeight="800" fill="#0f172a" letterSpacing="-0.5">Ami<tspan fill="#1d4ed8">quz</tspan></text>
+    <text x="58" y="43" fontFamily="system-ui, sans-serif" fontSize="8" fontWeight="400" fill="#6b7280" letterSpacing="1">FIND LEGAL HELP, POWERED BY AI</text>
+  </svg>
+</Link>
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex space-x-8 items-center">
