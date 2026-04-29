@@ -33,11 +33,11 @@ export default function Home() {
             <div className="flex items-center gap-6 mb-12 text-sm font-medium text-blue-50">
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-blue-300" />
-                10,000+ Verified Lawyers
+                Early Access — Join Now
               </div>
               <div className="flex items-center gap-2">
                 <Star className="w-4 h-4 text-yellow-400" />
-                4.8 Avg. Rating
+                AI-Powered Matching
               </div>
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-green-400" />
@@ -108,7 +108,7 @@ export default function Home() {
             <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-4">
               <CheckCircle2 className="w-6 h-6 text-blue-600" />
             </div>
-            <h4 className="text-xl font-bold text-gray-900">10,000+</h4>
+            <h4 className="text-xl font-bold text-gray-900">Early Access</h4>
             <p className="text-sm text-gray-500 mt-1">Verified Lawyers</p>
           </div>
 
@@ -148,7 +148,7 @@ export default function Home() {
             <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-4">
               <Users className="w-6 h-6 text-red-500" />
             </div>
-            <h4 className="text-xl font-bold text-gray-900">85,000+</h4>
+            <h4 className="text-xl font-bold text-gray-900">Growing Fast</h4>
             <p className="text-sm text-gray-500 mt-1">Clients Served</p>
           </div>
 
