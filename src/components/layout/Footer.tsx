@@ -9,18 +9,23 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-6 group">
-            <svg width="200" height="46" viewBox="0 0 220 50" xmlns="http://www.w3.org/2000/svg">
-  <rect x="0" y="0" width="48" height="48" rx="10" fill="#1d4ed8"/>
-  <line x1="24" y1="11" x2="24" y2="36" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-  <line x1="15" y1="36" x2="33" y2="36" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-  <line x1="6" y1="15" x2="42" y2="19" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-  <line x1="6" y1="15" x2="3" y2="24" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
-  <path d="M0 24 Q5 28 10 24" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
-  <line x1="42" y1="19" x2="45" y2="29" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
-  <path d="M39 29 Q44 34 49 29" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
-  <circle cx="45" cy="28" r="2" fill="#93c5fd"/>
-  <text x="58" y="28" fontFamily="system-ui, sans-serif" fontSize="22" fontWeight="800" fill="white" letterSpacing="-0.5">Ami<tspan fill="#60a5fa">quz</tspan></text>
-  <text x="58" y="43" fontFamily="system-ui, sans-serif" fontSize="8" fontWeight="400" fill="#9ca3af" letterSpacing="1">FIND LEGAL HELP, POWERED BY AI</text>
+           <Link href="/" className="flex items-center gap-2 mb-6 group">
+  <svg width="44" height="44" viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="54" height="54" rx="11" fill="#1d4ed8"/>
+    <line x1="27" y1="12" x2="27" y2="40" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+    <line x1="17" y1="40" x2="37" y2="40" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+    <line x1="7" y1="17" x2="47" y2="21" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+    <line x1="7" y1="17" x2="4" y2="27" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+    <path d="M1 27 Q6 32 11 27" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+    <line x1="47" y1="21" x2="50" y2="32" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+    <path d="M44 32 Q50 37 56 32" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+    <circle cx="50" cy="31" r="2" fill="#93c5fd"/>
+  </svg>
+  <div className="flex flex-col">
+    <span className="font-extrabold text-xl text-white leading-tight tracking-tight">Ami<span className="text-blue-400">quz</span></span>
+    <span className="text-[9px] text-gray-400 tracking-widest font-medium">FIND LEGAL HELP, POWERED BY AI</span>
+  </div>
+</Link>
 </svg>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">
