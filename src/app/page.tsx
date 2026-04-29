@@ -46,35 +46,63 @@ export default function Home() {
             </div>
 
             {/* Search Bar Container */}
-            <form action="/search" method="GET" className="bg-white p-2 rounded-full shadow-2xl flex flex-col sm:flex-row items-center gap-2 max-w-2xl">
+            {/* Desktop: single pill row. Mobile: clean card with stacked fields */}
+            <div className="max-w-2xl w-full">
               
-              <div className="flex-1 flex items-center bg-transparent px-4 py-2">
-                <Search className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
-                <select name="q" className="w-full bg-transparent border-none outline-none text-gray-700 cursor-pointer appearance-none">
-                  <option value="">All Practice Areas</option>
-                  <option value="corporate">Corporate Law</option>
-                  <option value="family">Family Law</option>
-                  <option value="criminal">Criminal Defense</option>
-                  <option value="ip">Intellectual Property</option>
-                </select>
-              </div>
+              {/* Desktop pill */}
+              <form action="/search" method="GET" className="hidden sm:flex bg-white p-2 rounded-full shadow-2xl items-center gap-2">
+                <div className="flex-1 flex items-center bg-transparent px-4 py-2">
+                  <Search className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+                  <select name="q" className="w-full bg-transparent border-none outline-none text-gray-700 cursor-pointer appearance-none">
+                    <option value="">All Practice Areas</option>
+                    <option value="Corporate Law">Corporate Law</option>
+                    <option value="Family Law">Family Law</option>
+                    <option value="Criminal Defense">Criminal Defense</option>
+                    <option value="Intellectual Property">Intellectual Property</option>
+                  </select>
+                </div>
+                <div className="w-px h-8 bg-gray-200"></div>
+                <div className="flex-1 flex items-center bg-transparent px-4 py-2">
+                  <MapPin className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+                  <input
+                    type="text"
+                    name="loc"
+                    placeholder="City or ZIP code"
+                    className="w-full bg-transparent border-none outline-none text-gray-900 placeholder-gray-500"
+                  />
+                </div>
+                <button type="submit" className="bg-[#2563eb] hover:bg-blue-700 text-white px-8 py-3.5 rounded-full font-bold transition-colors">
+                  Find Lawyers
+                </button>
+              </form>
 
-              <div className="w-px h-8 bg-gray-200 hidden sm:block"></div>
+              {/* Mobile card */}
+              <form action="/search" method="GET" className="sm:hidden bg-white rounded-2xl shadow-2xl overflow-hidden">
+                <div className="flex items-center px-4 py-3.5 border-b border-gray-100">
+                  <Search className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+                  <select name="q" className="w-full bg-transparent border-none outline-none text-gray-700 text-sm">
+                    <option value="">All Practice Areas</option>
+                    <option value="Corporate Law">Corporate Law</option>
+                    <option value="Family Law">Family Law</option>
+                    <option value="Criminal Defense">Criminal Defense</option>
+                    <option value="Intellectual Property">Intellectual Property</option>
+                  </select>
+                </div>
+                <div className="flex items-center px-4 py-3.5">
+                  <MapPin className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+                  <input
+                    type="text"
+                    name="loc"
+                    placeholder="City e.g. Bengaluru"
+                    className="w-full bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 text-sm"
+                  />
+                </div>
+                <button type="submit" className="w-full bg-[#2563eb] hover:bg-blue-700 text-white py-4 font-bold transition-colors text-sm">
+                  Find Lawyers
+                </button>
+              </form>
 
-              <div className="flex-1 flex items-center bg-transparent px-4 py-2">
-                <MapPin className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
-                <input 
-                  type="text" 
-                  name="loc"
-                  placeholder="City or ZIP code" 
-                  className="w-full bg-transparent border-none outline-none text-gray-900 placeholder-gray-500"
-                />
-              </div>
-
-              <button type="submit" className="bg-[#2563eb] hover:bg-blue-700 text-white px-8 py-3.5 rounded-full font-bold transition-colors w-full sm:w-auto text-center">
-                Find Lawyers
-              </button>
-            </form>
+            </div>
 
             {/* AI Assistant Link */}
             <div className="mt-6 text-sm text-blue-200 flex items-center gap-2">
