@@ -15,7 +15,7 @@ export default function Navbar() {
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center gap-2 group">
               <AlignJustify className="w-6 h-6 text-blue-600 transition-colors" />
-             <img src="/amiquz-logo(3).svg" alt="Amiquz" style={{height: '52px', width: 'auto'}} />
+             <img src="/logo.svg.svg" alt="Amiquz" style={{height: '52px', width: 'auto'}} />
             </Link>
           </div>
 
