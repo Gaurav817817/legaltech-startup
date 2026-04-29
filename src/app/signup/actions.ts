@@ -30,5 +30,11 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+
+  // Send lawyers to profile setup, clients to dashboard
+  if (role === 'lawyer') {
+    redirect('/lawyer-profile-setup')
+  } else {
+    redirect('/dashboard')
+  }
 }
