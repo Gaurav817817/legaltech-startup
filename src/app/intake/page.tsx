@@ -28,7 +28,7 @@ export default function IntakeChatPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
 
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white py-4 px-4 shadow-md shrink-0">
@@ -48,7 +48,7 @@ export default function IntakeChatPage() {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 max-w-3xl w-full mx-auto w-full flex flex-col overflow-y-auto pb-52">
+      <div className="flex-1 max-w-3xl w-full mx-auto w-full flex flex-col overflow-y-auto pb-6">
 
         {/* Empty state */}
         {messages.length === 0 && (
@@ -162,7 +162,7 @@ export default function IntakeChatPage() {
       </div>
 
       {/* BIG prominent input bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-blue-100 shadow-2xl z-20 px-4 py-4">
+      <div className="bg-white border-t-2 border-blue-100 shadow-2xl z-20 px-4 py-4 shrink-0">
         <div className="max-w-3xl mx-auto">
           <form
             onSubmit={(e) => {
