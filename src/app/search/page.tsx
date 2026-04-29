@@ -47,9 +47,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             {loc ? ` in ${loc}` : ''}
           </p>
           
-          {/* Mobile search bar */}
-          <form action="/search" method="GET" className="flex gap-2 md:hidden">
-            <div className="relative flex-1">
+          {/* Mobile search filters */}
+          <form action="/search" method="GET" className="flex flex-col gap-2 md:hidden">
+            <div className="relative">
               <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
@@ -59,7 +59,17 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
                 className="pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg w-full text-sm focus:ring-blue-500 focus:border-blue-500 text-gray-900"
               />
             </div>
-            <button type="submit" className="bg-blue-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium">
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                name="loc"
+                defaultValue={loc}
+                placeholder="City e.g. Bengaluru"
+                className="pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg w-full text-sm focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+              />
+            </div>
+            <button type="submit" className="bg-blue-600 text-white py-2.5 rounded-lg text-sm font-semibold w-full">
               Search
             </button>
           </form>
