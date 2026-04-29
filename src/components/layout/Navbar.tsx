@@ -14,7 +14,10 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center gap-2 group">
-             <img src="/amiquz-logo.svg" alt="Amiquz" height="64" style={{height: '64px', width: 'auto'}} />
+              <AlignJustify className="w-6 h-6 text-blue-600 transition-colors" />
+              <span className="font-extrabold text-2xl text-[#0f172a] tracking-tight">
+                Ami<span className="text-blue-600">quz</span>
+              </span>
             </Link>
           </div>
 
