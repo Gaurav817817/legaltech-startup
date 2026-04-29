@@ -1,40 +1,40 @@
-import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
-import LawyerDashboard from '@/components/dashboard/LawyerDashboard'
-import ClientDashboard from '@/components/dashboard/ClientDashboard'
+'use server'
 
-export default async function DashboardPage() {
+import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/utils/supabase/server'
+
+export async function signup(formData: FormData) {
   const supabase = await createClient()
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
+  const firstName = formData.get('first-name') as string
+  const lastName = formData.get('last-name') as string
+  const role = formData.get('account-type') as string
 
-  if (!user) {
-    redirect('/login')
-  }
-
-  const role = user.user_metadata?.role || 'client'
-
-  // If lawyer, check if they've completed their profile
-  if (role === 'lawyer') {
-    const { data: profile } = await supabase
-      .from('lawyer_profiles')
-      .select('id')
-      .eq('id', user.id)
-      .single()
-
-    // No profile yet — send them to fill it in
-    if (!profile) {
-      redirect('/lawyer-profile-setup')
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        first_name: firstName,
+        last_name: lastName,
+        role: role,
+      }
     }
+  })
+
+  if (error) {
+    redirect('/signup?error=' + encodeURIComponent(error.message))
   }
 
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full bg-gray-50 min-h-screen">
-      {role === 'lawyer' ? (
-        <LawyerDashboard user={user} />
-      ) : (
-        <ClientDashboard user={user} />
-      )}
-    </div>
-  )
+  revalidatePath('/', 'layout')
+
+  // Send lawyers to profile setup, clients to dashboard
+  if (role === 'lawyer') {
+    redirect('/lawyer-profile-setup')
+  } else {
+    redirect('/dashboard')
+  }
 }
