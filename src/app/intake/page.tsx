@@ -189,7 +189,7 @@ export default function IntakeChatPage() {
                   className="w-full bg-transparent border-none outline-none text-gray-900 text-sm placeholder-gray-400 resize-none leading-relaxed"
                   rows={4}
                   disabled={isLoading}
-                />
+               ></textarea>
               </div>
               <button
                 type="submit"
