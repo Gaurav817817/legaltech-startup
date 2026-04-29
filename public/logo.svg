@@ -1,22 +1,13 @@
-<svg width="280" height="70" viewBox="0 0 280 70" xmlns="http://www.w3.org/2000/svg">
-  <!-- Scale icon - tilted/dynamic -->
+<svg width="280" height="60" viewBox="0 0 280 60" xmlns="http://www.w3.org/2000/svg">
   <rect x="0" y="0" width="56" height="56" rx="11" fill="#1d4ed8"/>
-  <!-- post -->
   <line x1="28" y1="14" x2="28" y2="44" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- base -->
   <line x1="18" y1="44" x2="38" y2="44" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- tilted beam -->
   <line x1="8" y1="18" x2="48" y2="22" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- left pan (higher) chains -->
   <line x1="8" y1="18" x2="5" y2="28" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
   <path d="M2 28 Q8 33 14 28" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-  <!-- right pan (lower/heavier) chains -->
   <line x1="48" y1="22" x2="51" y2="34" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
   <path d="M44 34 Q51 39 58 34" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-  <!-- dot on heavy side -->
   <circle cx="51" cy="33" r="2.5" fill="#93c5fd"/>
-  <!-- Wordmark -->
-  <text x="66" y="35" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="800" fill="#0f172a" letter-spacing="-0.5">Ami<tspan fill="#1d4ed8">quz</tspan></text>
-  <!-- Tagline -->
-  <text x="67" y="52" font-family="system-ui, -apple-system, sans-serif" font-size="9.5" font-weight="400" fill="#6b7280" letter-spacing="1.1">FIND LEGAL HELP, POWERED BY AI</text>
+  <text x="66" y="35" font-family="system-ui, sans-serif" font-size="28" font-weight="800" fill="#0f172a" letter-spacing="-0.5">Ami<tspan fill="#1d4ed8">quz</tspan></text>
+  <text x="67" y="52" font-family="system-ui, sans-serif" font-size="9.5" font-weight="400" fill="#6b7280" letter-spacing="1.1">FIND LEGAL HELP, POWERED BY AI</text>
 </svg>
