@@ -173,8 +173,7 @@ export default function IntakeChatPage() {
             }}
           >
             <div className="flex gap-3 items-end">
-              <div className="flex-1 bg-gray-50 border-2 border-blue-300 focus-within:border-blue-600 rounded-2xl px-4 py-3 transition-colors shadow-sm">
-                <textarea
+             className="flex-1 bg-white border-2 border-blue-400 focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-100 rounded-2xl px-4 py-4 transition-all shadow-md"
                   ref={inputRef}
                   value={text}
                   onChange={(e) => setText(e.target.value)}
@@ -188,7 +187,7 @@ export default function IntakeChatPage() {
                   }}
                   placeholder="e.g. My landlord is refusing to return my deposit. What can I do?"
                   className="w-full bg-transparent border-none outline-none text-gray-900 text-sm placeholder-gray-400 resize-none leading-relaxed"
-                  rows={2}
+                  rows={4}
                   disabled={isLoading}
                 />
               </div>
