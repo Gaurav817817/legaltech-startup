@@ -15,7 +15,21 @@ export default function Navbar() {
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center gap-2 group">
               <AlignJustify className="w-6 h-6 text-blue-600 transition-colors" />
-             <img src="/logo.svg.svg" alt="Amiquz" style={{height: '52px', width: 'auto'}} />
+             <div className="flex items-center gap-2">
+  <div style={{width:'44px', height:'44px', borderRadius:'10px', background:'#1d4ed8', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0}}>
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="16" y1="7" x2="16" y2="24" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+      <line x1="9" y1="24" x2="23" y2="24" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+      <line x1="4" y1="10" x2="28" y2="13" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+      <line x1="4" y1="10" x2="2" y2="17" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M0 17 Q4 21 8 17" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+      <line x1="28" y1="13" x2="30" y2="20" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M26 20 Q30 24 34 20" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+      <circle cx="30" cy="20" r="2" fill="#93c5fd"/>
+    </svg>
+  </div>
+  <span style={{fontWeight:800, fontSize:'22px', color:'#0f172a', letterSpacing:'-0.5px'}}>Ami<span style={{color:'#1d4ed8'}}>quz</span></span>
+</div>
             </Link>
           </div>
 
