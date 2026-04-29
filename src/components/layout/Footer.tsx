@@ -9,9 +9,9 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-6 group">
-              <span className="font-extrabold text-2xl text-white tracking-tight">
-                Lex<span className="text-blue-500">Connect</span>
-              </span>
+             <span className="font-extrabold text-2xl text-white tracking-tight">
+  Ami<span className="text-blue-500">quz</span>
+</span>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">
               Connecting individuals and businesses with top-tier, verified legal professionals.
