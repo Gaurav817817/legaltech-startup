@@ -1,7 +1,17 @@
-import { Briefcase, Users, Clock, CheckCircle, Edit, Eye } from 'lucide-react';
+import { Briefcase, Users, Clock, CheckCircle, Edit, Eye, Phone, Mail } from 'lucide-react';
 import Link from 'next/link';
 
-export default function LawyerDashboard({ user }: { user: any }) {
+interface Enquiry {
+  id: string
+  client_name: string
+  client_phone: string
+  client_email: string | null
+  issue_description: string
+  status: string
+  created_at: string
+}
+
+export default function LawyerDashboard({ user, enquiries }: { user: any; enquiries: Enquiry[] }) {
   const firstName = user.user_metadata?.first_name || 'there'
 
   return (
@@ -31,16 +41,52 @@ export default function LawyerDashboard({ user }: { user: any }) {
 
           {/* Enquiries */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 bg-gray-50">
+            <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
               <h3 className="font-semibold text-gray-900 flex items-center gap-2">
                 <Users className="w-4 h-4 text-blue-500" /> Client Enquiries
               </h3>
+              {enquiries.length > 0 && (
+                <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">{enquiries.length}</span>
+              )}
             </div>
-            <div className="p-10 text-center">
-              <Users className="w-10 h-10 text-gray-200 mx-auto mb-3" />
-              <p className="text-gray-500 font-medium">No enquiries yet.</p>
-              <p className="text-sm text-gray-400 mt-1">Once your profile is approved and clients reach out, enquiries will appear here.</p>
-            </div>
+            {enquiries.length === 0 ? (
+              <div className="p-10 text-center">
+                <Users className="w-10 h-10 text-gray-200 mx-auto mb-3" />
+                <p className="text-gray-500 font-medium">No enquiries yet.</p>
+                <p className="text-sm text-gray-400 mt-1">When clients submit a free enquiry from your profile, they'll appear here.</p>
+              </div>
+            ) : (
+              <ul className="divide-y divide-gray-100">
+                {enquiries.map((enq) => (
+                  <li key={enq.id} className="p-5 hover:bg-gray-50">
+                    <div className="flex justify-between items-start gap-2">
+                      <p className="font-semibold text-gray-900 text-sm">{enq.client_name}</p>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${
+                        enq.status === 'new' ? 'bg-blue-100 text-blue-700' :
+                        enq.status === 'contacted' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-green-100 text-green-700'
+                      }`}>
+                        {enq.status === 'new' ? 'New' : enq.status === 'contacted' ? 'Contacted' : 'Converted'}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">{enq.issue_description}</p>
+                    <div className="mt-2 flex flex-wrap gap-3 text-xs text-gray-500">
+                      <a href={`tel:${enq.client_phone}`} className="flex items-center gap-1 text-blue-600 hover:underline font-medium">
+                        <Phone className="w-3 h-3" /> {enq.client_phone}
+                      </a>
+                      {enq.client_email && (
+                        <a href={`mailto:${enq.client_email}`} className="flex items-center gap-1 text-blue-600 hover:underline font-medium">
+                          <Mail className="w-3 h-3" /> {enq.client_email}
+                        </a>
+                      )}
+                      <span className="text-gray-400">
+                        {new Date(enq.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {/* Upcoming consultations */}

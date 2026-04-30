@@ -1,5 +1,6 @@
 import { Star, MapPin, CheckCircle, Clock, Calendar } from 'lucide-react';
 import BookingWidget from '@/components/booking/BookingWidget';
+import EnquiryForm from '@/components/EnquiryForm';
 import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
 
@@ -84,8 +85,12 @@ export default async function LawyerProfilePage({ params }: { params: Promise<{ 
           </div>
 
           {/* Booking Sidebar (Right) */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-4">
             <BookingWidget lawyer={widgetLawyerData} />
+            <EnquiryForm
+              lawyerId={lawyer.id}
+              lawyerName={lawyer.first_name}
+            />
           </div>
           
         </div>

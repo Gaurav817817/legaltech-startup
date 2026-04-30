@@ -14,6 +14,8 @@ export default async function DashboardPage() {
 
   const role = user.user_metadata?.role || 'client'
 
+  let enquiries: any[] = []
+
   // If lawyer, check if they've completed their profile
   if (role === 'lawyer') {
     const { data: profile } = await supabase
@@ -26,12 +28,20 @@ export default async function DashboardPage() {
     if (!profile) {
       redirect('/lawyer-profile-setup')
     }
+
+    const { data } = await supabase
+      .from('enquiries')
+      .select('*')
+      .eq('lawyer_id', user.id)
+      .order('created_at', { ascending: false })
+
+    enquiries = data ?? []
   }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full bg-gray-50 min-h-screen">
       {role === 'lawyer' ? (
-        <LawyerDashboard user={user} />
+        <LawyerDashboard user={user} enquiries={enquiries} />
       ) : (
         <ClientDashboard user={user} />
       )}

@@ -35,7 +35,31 @@ CREATE TABLE public.consultations (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- 3. Insert Mock Seed Data for Testing
+-- 3. Create Enquiries Table
+CREATE TABLE public.enquiries (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  lawyer_id UUID REFERENCES public.lawyer_profiles(id) ON DELETE CASCADE,
+  client_name TEXT NOT NULL,
+  client_phone TEXT NOT NULL,
+  client_email TEXT,
+  issue_description TEXT NOT NULL,
+  status TEXT DEFAULT 'new', -- 'new', 'contacted', 'converted'
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE public.enquiries ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can insert an enquiry (no login required)
+CREATE POLICY "Anyone can submit an enquiry."
+  ON public.enquiries FOR INSERT
+  WITH CHECK ( true );
+
+-- Only the lawyer who owns the enquiry can read it
+CREATE POLICY "Lawyers can view their own enquiries."
+  ON public.enquiries FOR SELECT
+  USING ( auth.uid() = lawyer_id );
+
+-- 4. Insert Mock Seed Data for Testing
 INSERT INTO public.lawyer_profiles 
 (id, first_name, last_name, title, practice_areas, location, rating, reviews, image_url, about, education, languages, consultation_fee)
 VALUES 
