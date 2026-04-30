@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
-import { CheckCircle, ChevronRight, ChevronLeft, User, MapPin, Briefcase, Star, DollarSign, Globe } from 'lucide-react'
+import { CheckCircle, ChevronRight, ChevronLeft, User, MapPin, Briefcase, Star, DollarSign, Globe, Camera, Upload } from 'lucide-react'
 
 // ─── Data ───────────────────────────────────────────────────────────────────
 
@@ -66,6 +66,9 @@ export default function LawyerProfileSetup() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const photoRef = useRef<HTMLInputElement>(null)
   const [userName, setUserName] = useState({ first: '', last: '' })
 
   // Load user name on mount
@@ -145,6 +148,20 @@ export default function LawyerProfileSetup() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { setError('Not logged in'); setLoading(false); return }
 
+    // Upload photo if selected
+    let image_url = ''
+    if (photoFile) {
+      const ext = photoFile.name.split('.').pop()
+      const path = `${user.id}/profile.${ext}`
+      const { error: uploadError } = await supabase.storage
+        .from('profile-photos')
+        .upload(path, photoFile, { upsert: true })
+      if (!uploadError) {
+        const { data: urlData } = supabase.storage.from('profile-photos').getPublicUrl(path)
+        image_url = urlData.publicUrl
+      }
+    }
+
     const bio = [
       form.bio_specializes && `I specialize in ${form.bio_specializes}.`,
       form.bio_handled && `I have handled ${form.bio_handled}.`,
@@ -165,6 +182,7 @@ export default function LawyerProfileSetup() {
       rating: 0,
       reviews: 0,
       approved: false,
+      image_url: image_url || null,
       // extended fields stored as JSON in about for now
       practitioner_type: form.practitioner_type,
       firm_name: form.firm_name,
@@ -241,6 +259,38 @@ export default function LawyerProfileSetup() {
           {step === 0 && (
             <div className="space-y-5">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><User className="w-5 h-5 text-blue-500" /> Identity & Verification</h2>
+
+              {/* Photo Upload */}
+              <div className="flex flex-col items-center gap-3">
+                <div
+                  onClick={() => photoRef.current?.click()}
+                  className="w-24 h-24 rounded-full border-2 border-dashed border-blue-300 flex items-center justify-center cursor-pointer hover:border-blue-500 overflow-hidden bg-blue-50 transition-colors"
+                >
+                  {photoPreview
+                    ? <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
+                    : <Camera className="w-8 h-8 text-blue-400" />
+                  }
+                </div>
+                <input
+                  ref={photoRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={e => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      setPhotoFile(file)
+                      setPhotoPreview(URL.createObjectURL(file))
+                    }
+                  }}
+                />
+                <button type="button" onClick={() => photoRef.current?.click()}
+                  className="flex items-center gap-1.5 text-sm text-blue-600 font-medium hover:underline">
+                  <Upload className="w-4 h-4" />
+                  {photoPreview ? 'Change photo' : 'Upload profile photo'}
+                </button>
+                <p className="text-xs text-gray-400">JPG or PNG, max 2MB. Lawyers with photos get more enquiries.</p>
+              </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
