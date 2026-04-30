@@ -7,7 +7,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-white">
       
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] text-white pt-24 pb-48 px-4 sm:px-6 lg:px-8 overflow-hidden" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '28px 28px' }}>
+      <section className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] text-white pt-24 pb-48 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
           
           {/* Left Column: Text & Search */}

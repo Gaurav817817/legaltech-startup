@@ -29,7 +29,7 @@ export default async function LawyerProfilePage({ params }: { params: Promise<{ 
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Profile hero strip */}
-      <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] py-10 px-4 overflow-hidden" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '28px 28px' }}>
+      <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] py-10 px-4 overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10 flex items-center gap-4">
           {lawyer.image_url ? (
             <img src={lawyer.image_url} alt={lawyer.first_name} className="w-20 h-20 rounded-full object-cover border-4 border-white/30 shadow-xl" />

@@ -5,7 +5,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] text-white py-20 px-4 text-center overflow-hidden" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '28px 28px' }}>
+      <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] text-white py-20 px-4 text-center overflow-hidden">
         <div className="max-w-2xl mx-auto relative z-10">
           <h1 className="text-5xl font-extrabold tracking-tight mb-4">
             <span className="bg-gradient-to-r from-amber-300 to-yellow-200 bg-clip-text text-transparent">Transparent</span> Pricing
@@ -41,7 +41,7 @@ export default function PricingPage() {
           </div>
 
           {/* Lawyer Box */}
-          <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] rounded-3xl p-10 shadow-xl overflow-hidden" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
+          <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] rounded-3xl p-10 shadow-xl overflow-hidden">
             <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-400 to-yellow-400 text-gray-900 text-xs font-extrabold px-4 py-1.5 rounded-full flex items-center gap-1 shadow-lg">
               <Star className="w-3 h-3 fill-current" /> Popular
             </div>

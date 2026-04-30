@@ -4,7 +4,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] text-white py-20 px-4 text-center overflow-hidden" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '28px 28px' }}>
+      <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] text-white py-20 px-4 text-center overflow-hidden">
         <div className="max-w-2xl mx-auto relative z-10">
           <h1 className="text-5xl font-extrabold tracking-tight mb-4">
             <span className="bg-gradient-to-r from-amber-300 to-yellow-200 bg-clip-text text-transparent">Contact</span> Us

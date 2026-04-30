@@ -28,7 +28,7 @@ export default function LawyerDashboard({ user, enquiries, isApproved }: { user:
 
   return (
     <div className="space-y-6">
-      <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] rounded-2xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 overflow-hidden mb-2" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
+      <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] rounded-2xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 overflow-hidden mb-2">
         <div>
           <h2 className="text-2xl font-extrabold text-white">Welcome, {firstName} 👋</h2>
           <p className="text-blue-200 text-sm mt-1">Your lawyer dashboard — manage your profile and enquiries here.</p>

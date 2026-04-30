@@ -36,7 +36,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Header */}
-      <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] text-white py-12 px-4 overflow-hidden" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '28px 28px' }}>
+      <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] text-white py-12 px-4 overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
           <h1 className="text-4xl font-extrabold mb-2">Find a <span className="bg-gradient-to-r from-amber-300 to-yellow-200 bg-clip-text text-transparent">Lawyer</span></h1>
           <p className="text-blue-200 text-sm">
