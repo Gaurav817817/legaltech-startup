@@ -66,6 +66,20 @@ export default function LawyerProfileSetup() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [userName, setUserName] = useState({ first: '', last: '' })
+
+  // Load user name on mount
+  useState(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        setUserName({
+          first: user.user_metadata?.first_name || '',
+          last: user.user_metadata?.last_name || '',
+        })
+      }
+    })
+  })
 
   const [form, setForm] = useState({
     // Step 1
@@ -231,12 +245,12 @@ export default function LawyerProfileSetup() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="label">First Name</label>
-                  <input disabled value="" placeholder="From your account" className="input bg-gray-50 cursor-not-allowed" />
+                  <input disabled value={userName.first} className="input bg-gray-50 cursor-not-allowed" id="fname" />
                   <p className="text-xs text-gray-400 mt-1">Pulled from your signup</p>
                 </div>
                 <div>
                   <label className="label">Last Name</label>
-                  <input disabled value="" placeholder="From your account" className="input bg-gray-50 cursor-not-allowed" />
+                  <input disabled value={userName.last} className="input bg-gray-50 cursor-not-allowed" id="lname" />
                 </div>
               </div>
 
