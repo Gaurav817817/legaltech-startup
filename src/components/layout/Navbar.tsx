@@ -13,7 +13,8 @@ export default function Navbar() {
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => setUser(user))
+    // getSession reads from cookie instantly — no network round-trip
+    supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null))
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
     })

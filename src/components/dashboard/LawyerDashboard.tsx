@@ -15,7 +15,7 @@ interface Enquiry {
   created_at: string
 }
 
-export default function LawyerDashboard({ user, enquiries }: { user: any; enquiries: Enquiry[] }) {
+export default function LawyerDashboard({ user, enquiries, isApproved }: { user: any; enquiries: Enquiry[]; isApproved: boolean }) {
   const router = useRouter()
   const firstName = user.user_metadata?.first_name || 'there'
 
@@ -43,14 +43,24 @@ export default function LawyerDashboard({ user, enquiries }: { user: any; enquir
         </div>
       </div>
 
-      {/* Pending approval banner */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex items-start gap-3">
-        <Clock className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
-        <div>
-          <p className="font-semibold text-yellow-800 text-sm">Profile Under Review</p>
-          <p className="text-yellow-700 text-xs mt-0.5">Your profile is being reviewed by the Amiquz team. You'll receive a verified badge within 24 hours and become visible to clients.</p>
+      {/* Approval status banner */}
+      {isApproved ? (
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3">
+          <CheckCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-green-800 text-sm">Profile Approved & Live</p>
+            <p className="text-green-700 text-xs mt-0.5">Your profile is visible to clients on Amiquz. You'll receive enquiries here as clients reach out.</p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex items-start gap-3">
+          <Clock className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-yellow-800 text-sm">Profile Under Review</p>
+            <p className="text-yellow-700 text-xs mt-0.5">Your profile is being reviewed by the Amiquz team. You'll receive a verified badge within 24 hours and become visible to clients.</p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main */}

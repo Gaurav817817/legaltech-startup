@@ -16,11 +16,13 @@ export default async function DashboardPage() {
 
   let enquiries: any[] = []
 
+  let isApproved = false
+
   // If lawyer, check if they've completed their profile
   if (role === 'lawyer') {
     const { data: profile } = await supabase
       .from('lawyer_profiles')
-      .select('id')
+      .select('id, approved')
       .eq('id', user.id)
       .single()
 
@@ -28,6 +30,8 @@ export default async function DashboardPage() {
     if (!profile) {
       redirect('/lawyer-profile-setup')
     }
+
+    isApproved = profile.approved === true
 
     const { data } = await supabase
       .from('enquiries')
@@ -41,7 +45,7 @@ export default async function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full bg-gray-50 min-h-screen">
       {role === 'lawyer' ? (
-        <LawyerDashboard user={user} enquiries={enquiries} />
+        <LawyerDashboard user={user} enquiries={enquiries} isApproved={isApproved} />
       ) : (
         <ClientDashboard user={user} />
       )}
