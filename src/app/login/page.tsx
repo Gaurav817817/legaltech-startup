@@ -5,24 +5,24 @@ import { Scale } from "lucide-react";
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const params = await searchParams;
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] flex flex-col justify-center py-12 sm:px-6 lg:px-8" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '28px 28px' }}>
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <div className="flex justify-center">
-          <div className="w-12 h-12 bg-blue-700 rounded-md flex items-center justify-center shadow-lg">
-            <Scale className="w-8 h-8 text-white" />
+          <div className="w-14 h-14 bg-gradient-to-br from-amber-400 to-yellow-400 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/30">
+            <Scale className="w-8 h-8 text-gray-900" />
           </div>
         </div>
-        <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Welcome back</h2>
+        <h2 className="mt-6 text-3xl font-extrabold text-white">Welcome back</h2>
         <p className="mt-2 text-sm text-gray-600">
           New to Amiquz?{" "}
-          <Link href="/signup" className="font-semibold text-blue-600 hover:text-blue-500">
+          <Link href="/signup" className="font-semibold text-amber-300 hover:text-amber-200">
             Create a free account →
           </Link>
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-6 shadow-xl sm:rounded-2xl border border-gray-100">
+        <div className="bg-white/95 backdrop-blur-md py-8 px-6 shadow-2xl sm:rounded-2xl border border-white/20">
           {params?.error && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
               {params.error}
@@ -48,14 +48,14 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             </div>
 
             <button type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+              className="w-full flex justify-center py-3 px-4 rounded-full text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-500/40">
               Sign In
             </button>
           </form>
 
           <div className="mt-5 border-t border-gray-100 pt-5 text-center">
             <p className="text-xs text-gray-400">Are you a lawyer?{" "}
-              <Link href="/signup" className="text-blue-600 font-semibold hover:underline">Sign up as a lawyer →</Link>
+              <Link href="/signup" className="text-blue-500 font-semibold hover:underline">Sign up as a lawyer →</Link>
             </p>
           </div>
         </div>

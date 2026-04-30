@@ -6,12 +6,12 @@ export default function ClientDashboard({ user }: { user: any }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] rounded-2xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 overflow-hidden mb-2" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Welcome, {firstName} 👋</h2>
-          <p className="text-gray-500 text-sm mt-1">Find a lawyer or manage your consultations here.</p>
+          <h2 className="text-2xl font-extrabold text-white">Welcome, {firstName} 👋</h2>
+          <p className="text-blue-200 text-sm mt-1">Find a lawyer or manage your consultations here.</p>
         </div>
-        <Link href="/search" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center gap-2 shadow-sm">
+        <Link href="/search" className="bg-gradient-to-r from-amber-400 to-yellow-400 text-gray-900 px-5 py-2.5 rounded-full text-sm font-bold hover:from-amber-300 hover:to-yellow-300 flex items-center gap-2 shadow-lg shadow-amber-500/30 transition-all">
           <Search className="w-4 h-4" /> Find a Lawyer
         </Link>
       </div>

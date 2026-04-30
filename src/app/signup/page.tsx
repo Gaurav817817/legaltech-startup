@@ -50,22 +50,22 @@ export default function SignupPage({ searchParams }: { searchParams: Promise<{ e
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] flex flex-col justify-center py-12 sm:px-6 lg:px-8" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '28px 28px' }}>
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <div className="flex justify-center">
-          <div className="w-12 h-12 bg-blue-600 rounded-md flex items-center justify-center shadow-lg">
-            <Scale className="w-8 h-8 text-white" />
+          <div className="w-14 h-14 bg-gradient-to-br from-amber-400 to-yellow-400 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/30">
+            <Scale className="w-8 h-8 text-gray-900" />
           </div>
         </div>
-        <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Join Amiquz</h2>
-        <p className="mt-2 text-sm text-gray-600">
+        <h2 className="mt-6 text-3xl font-extrabold text-white">Join Amiquz</h2>
+        <p className="mt-2 text-sm text-blue-200">
           Already have an account?{" "}
-          <Link href="/login" className="font-semibold text-blue-600 hover:text-blue-500">Sign in →</Link>
+          <Link href="/login" className="font-semibold text-amber-300 hover:text-amber-200">Sign in →</Link>
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl">
-        <div className="bg-white py-8 px-4 shadow-xl sm:rounded-2xl sm:px-10 border border-gray-100">
+        <div className="bg-white/95 backdrop-blur-md py-8 px-4 shadow-2xl sm:rounded-2xl sm:px-10 border border-white/20">
 
           {(params?.error || clientError) && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
@@ -153,7 +153,7 @@ export default function SignupPage({ searchParams }: { searchParams: Promise<{ e
             </div>
 
             <button type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+              className="w-full flex justify-center py-3 px-4 rounded-full text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-500/40">
               Create Account
             </button>
           </form>

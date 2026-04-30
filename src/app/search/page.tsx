@@ -34,19 +34,24 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const PRACTICE_AREAS = ['Corporate Law', 'Family Law', 'Criminal Defense', 'Intellectual Property', 'Real Estate', 'Employment Law', 'Tax Law', 'Immigration', 'Startups & Tech', 'Divorce']
 
   return (
-    <div className="bg-gray-50 min-h-screen py-6 md:py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Header */}
-        <div className="mb-6 flex flex-col gap-3">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Find a Lawyer</h1>
-          <p className="text-gray-500 text-sm">
+    <div className="bg-gray-50 min-h-screen">
+      {/* Header */}
+      <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] text-white py-12 px-4 overflow-hidden" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '28px 28px' }}>
+        <div className="max-w-7xl mx-auto relative z-10">
+          <h1 className="text-4xl font-extrabold mb-2">Find a <span className="bg-gradient-to-r from-amber-300 to-yellow-200 bg-clip-text text-transparent">Lawyer</span></h1>
+          <p className="text-blue-200 text-sm">
             {lawyers?.length === 0 ? 'No lawyers found' : `${lawyers?.length} lawyer${lawyers?.length === 1 ? '' : 's'} available`}
             {query ? ` for "${query}"` : ''}
             {loc ? ` in ${loc}` : ''}
           </p>
+        </div>
+      </div>
+      <div className="py-6 md:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Mobile search filters */}
+        <div className="mb-6 flex flex-col gap-3">
           
-          {/* Mobile search filters */}
           <form action="/search" method="GET" className="flex flex-col gap-2 md:hidden">
             <div className="relative">
               <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -179,7 +184,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
                     )}
                     <Link
                       href={`/lawyers/${lawyer.id}`}
-                      className="w-full sm:w-auto bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors text-center"
+                      className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2 rounded-full text-sm font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md shadow-blue-500/30 text-center"
                     >
                       View Profile & Book
                     </Link>
@@ -189,6 +194,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             ))}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

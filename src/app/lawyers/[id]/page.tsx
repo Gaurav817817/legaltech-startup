@@ -27,7 +27,24 @@ export default async function LawyerProfilePage({ params }: { params: Promise<{ 
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
+    <div className="bg-gray-50 min-h-screen">
+      {/* Profile hero strip */}
+      <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] py-10 px-4 overflow-hidden" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '28px 28px' }}>
+        <div className="max-w-7xl mx-auto relative z-10 flex items-center gap-4">
+          {lawyer.image_url ? (
+            <img src={lawyer.image_url} alt={lawyer.first_name} className="w-20 h-20 rounded-full object-cover border-4 border-white/30 shadow-xl" />
+          ) : (
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 to-yellow-400 flex items-center justify-center border-4 border-white/20 shadow-xl">
+              <span className="text-2xl font-extrabold text-gray-900">{lawyer.first_name?.[0]}{lawyer.last_name?.[0]}</span>
+            </div>
+          )}
+          <div>
+            <h1 className="text-2xl font-extrabold text-white">{lawyer.first_name} {lawyer.last_name}</h1>
+            {lawyer.title && <p className="text-blue-200 text-sm">{lawyer.title}</p>}
+          </div>
+        </div>
+      </div>
+      <div className="py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -94,6 +111,7 @@ export default async function LawyerProfilePage({ params }: { params: Promise<{ 
           </div>
           
         </div>
+      </div>
       </div>
     </div>
   );

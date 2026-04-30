@@ -7,7 +7,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-white">
       
       {/* Hero Section */}
-      <section className="relative bg-[#1e3a8a] text-white pt-24 pb-48 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] text-white pt-24 pb-48 px-4 sm:px-6 lg:px-8 overflow-hidden" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '28px 28px' }}>
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
           
           {/* Left Column: Text & Search */}
@@ -21,7 +21,7 @@ export default function Home() {
             {/* Headline */}
             <h1 className="text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 leading-[1.1]">
               Find Trusted Legal <br />
-              Help, <span className="text-blue-300">Faster Than Ever.</span>
+              Help, <span className="bg-gradient-to-r from-amber-300 to-yellow-200 bg-clip-text text-transparent">Faster Than Ever.</span>
             </h1>
 
             {/* Subheadline */}
@@ -71,7 +71,7 @@ export default function Home() {
                     className="w-full bg-transparent border-none outline-none text-gray-900 placeholder-gray-500"
                   />
                 </div>
-                <button type="submit" className="bg-[#2563eb] hover:bg-blue-700 text-white px-8 py-3.5 rounded-full font-bold transition-colors">
+                <button type="submit" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3.5 rounded-full font-bold transition-all shadow-lg shadow-blue-500/40">
                   Find Lawyers
                 </button>
               </form>
@@ -97,7 +97,7 @@ export default function Home() {
                     className="w-full bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 text-sm"
                   />
                 </div>
-                <button type="submit" className="w-full bg-[#2563eb] hover:bg-blue-700 text-white py-4 font-bold transition-colors text-sm">
+                <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 font-bold transition-all text-sm shadow-lg shadow-blue-500/30">
                   Find Lawyers
                 </button>
               </form>

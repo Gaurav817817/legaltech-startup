@@ -28,16 +28,16 @@ export default function LawyerDashboard({ user, enquiries, isApproved }: { user:
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] rounded-2xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 overflow-hidden mb-2" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Welcome, {firstName} 👋</h2>
-          <p className="text-gray-500 text-sm mt-1">Your lawyer dashboard — manage your profile and enquiries here.</p>
+          <h2 className="text-2xl font-extrabold text-white">Welcome, {firstName} 👋</h2>
+          <p className="text-blue-200 text-sm mt-1">Your lawyer dashboard — manage your profile and enquiries here.</p>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/lawyer-profile-setup" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 flex items-center gap-2 shadow-sm">
+          <Link href="/lawyer-profile-setup" className="bg-gradient-to-r from-amber-400 to-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-bold hover:from-amber-300 hover:to-yellow-300 flex items-center gap-2 shadow-lg shadow-amber-500/30 transition-all">
             <Edit className="w-4 h-4" /> Edit Profile
           </Link>
-          <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-red-600 border border-red-200 hover:bg-red-50 transition-colors">
+          <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-white border border-white/30 hover:bg-white/10 transition-colors">
             <LogOut className="w-4 h-4" /> Logout
           </button>
         </div>
@@ -73,7 +73,7 @@ export default function LawyerDashboard({ user, enquiries, isApproved }: { user:
                 <Users className="w-4 h-4 text-blue-500" /> Client Enquiries
               </h3>
               {enquiries.length > 0 && (
-                <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">{enquiries.length}</span>
+                <span className="bg-gradient-to-r from-amber-400 to-yellow-400 text-gray-900 text-xs font-bold px-2.5 py-0.5 rounded-full">{enquiries.length}</span>
               )}
             </div>
             {enquiries.length === 0 ? (
