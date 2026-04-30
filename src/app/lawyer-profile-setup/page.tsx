@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
-import { CheckCircle, ChevronRight, ChevronLeft, User, MapPin, Briefcase, Star, DollarSign, Globe } from 'lucide-react'
+import { CheckCircle, ChevronRight, ChevronLeft, User, MapPin, Briefcase, Star, DollarSign, Globe, Phone, Save } from 'lucide-react'
 
 const BAR_COUNCIL_STATES = [
   'Bar Council of India', 'Andhra Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
@@ -18,7 +18,7 @@ const COURTS = ['Supreme Court of India', 'High Court', 'District Court', 'Consu
 const PRIMARY_AREAS = [
   'Criminal Law', 'Corporate Law', 'Civil Litigation', 'Family Law',
   'Intellectual Property', 'Real Estate', 'Employment Law', 'Tax Law',
-  'Immigration', 'Banking & Finance', 'Consumer Rights', 'Cyber Law'
+  'Immigration', 'Banking & Finance', 'Consumer Rights', 'Cyber Law', 'Other'
 ]
 
 const SUB_AREAS: Record<string, string[]> = {
@@ -41,22 +41,34 @@ const SERVICE_TYPES = ['Legal Consultation', 'Document Drafting', 'Case Represen
 const CLIENT_TYPES = ['Individuals', 'Startups', 'Corporates', 'Government', 'NGOs']
 
 const STEPS = [
-  { label: 'Identity', icon: User },
-  { label: 'Location', icon: MapPin },
-  { label: 'Practice', icon: Briefcase },
-  { label: 'Experience', icon: Star },
-  { label: 'Pricing', icon: DollarSign },
+  { label: 'Identity', icon: User, fields: ['practitioner_type', 'phone'] },
+  { label: 'Location', icon: MapPin, fields: ['location'] },
+  { label: 'Practice', icon: Briefcase, fields: ['primary_areas'] },
+  { label: 'Experience', icon: Star, fields: [] },
+  { label: 'Pricing', icon: DollarSign, fields: ['fee_60min'] },
 ]
+
+const FIELD_LABELS: Record<string, string> = {
+  practitioner_type: 'Practitioner Type',
+  phone: 'Phone Number',
+  location: 'Primary City',
+  primary_areas: 'Primary Practice Areas',
+  fee_60min: 'Hourly Consultation Fee',
+  other_practice_area: 'Other Practice Area',
+}
 
 const EMPTY_FORM = {
   title: '', practitioner_type: '', firm_name: '', years_experience: '',
-  bar_enrollment: '', bar_council_state: '',
+  bar_enrollment: '', bar_council_state: '', phone: '',
   location: '', courts: [] as string[], work_mode: '', availability: [] as string[],
   primary_areas: [] as string[], sub_areas: [] as string[], languages: [] as string[],
+  other_practice_area: '',
   cases_handled: '', client_types: [] as string[], notable_cases: '',
   success_rate: '', bio_specializes: '', bio_handled: '', bio_why: '',
   fee_15min: '', fee_30min: '', fee_60min: '', services: [] as string[],
 }
+
+const STORAGE_KEY = 'amiquz_lawyer_form_draft'
 
 export default function LawyerProfileSetup() {
   const router = useRouter()
@@ -64,11 +76,15 @@ export default function LawyerProfileSetup() {
   const [loading, setLoading] = useState(false)
   const [pageLoading, setPageLoading] = useState(true)
   const [error, setError] = useState('')
+  const [errorField, setErrorField] = useState('')
   const [success, setSuccess] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
   const [isEditing, setIsEditing] = useState(false)
+  const [draftRestored, setDraftRestored] = useState(false)
+  const [autoSavedAt, setAutoSavedAt] = useState<string>('')
+  const fieldRefs = useRef<Record<string, HTMLElement | null>>({})
 
-  // Pre-fill form with existing data
+  // Pre-fill form: first try Supabase profile, then localStorage draft
   useEffect(() => {
     const loadProfile = async () => {
       const supabase = createClient()
@@ -83,7 +99,6 @@ export default function LawyerProfileSetup() {
 
       if (profile) {
         setIsEditing(true)
-        // Pre-fill all existing fields
         setForm({
           title: profile.title || '',
           practitioner_type: profile.practitioner_type || '',
@@ -91,6 +106,7 @@ export default function LawyerProfileSetup() {
           years_experience: profile.years_experience || '',
           bar_enrollment: profile.education?.[0]?.replace('Bar Enrollment: ', '') || '',
           bar_council_state: profile.bar_council_state || '',
+          phone: profile.phone || '',
           location: profile.location || '',
           courts: profile.courts || [],
           work_mode: profile.work_mode || '',
@@ -98,23 +114,45 @@ export default function LawyerProfileSetup() {
           primary_areas: (profile.practice_areas || []).filter((a: string) => PRIMARY_AREAS.includes(a)),
           sub_areas: (profile.practice_areas || []).filter((a: string) => !PRIMARY_AREAS.includes(a)),
           languages: profile.languages || [],
+          other_practice_area: profile.other_practice_area || '',
           cases_handled: profile.cases_handled || '',
           client_types: profile.client_types || [],
           notable_cases: profile.notable_cases || '',
           success_rate: profile.success_rate || '',
-          bio_specializes: '',
-          bio_handled: '',
-          bio_why: '',
+          bio_specializes: '', bio_handled: '', bio_why: '',
           fee_15min: profile.fee_15min || '',
           fee_30min: profile.fee_30min || '',
           fee_60min: profile.fee_60min || '',
           services: profile.services || [],
         })
+        setPageLoading(false)
+        return
+      }
+
+      // No profile yet — check for draft
+      const draft = localStorage.getItem(STORAGE_KEY)
+      if (draft) {
+        try {
+          const parsed = JSON.parse(draft)
+          setForm(parsed.form)
+          setStep(parsed.step || 0)
+          setDraftRestored(true)
+        } catch {}
       }
       setPageLoading(false)
     }
     loadProfile()
   }, [])
+
+  // Auto-save to localStorage on every change (only for new lawyers, not editing)
+  useEffect(() => {
+    if (pageLoading || isEditing) return
+    const timer = setTimeout(() => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ form, step }))
+      setAutoSavedAt(new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }))
+    }, 800)
+    return () => clearTimeout(timer)
+  }, [form, step, pageLoading, isEditing])
 
   const set = (key: string, val: any) => setForm(prev => ({ ...prev, [key]: val }))
   const toggleArr = (key: string, val: string) => {
@@ -124,23 +162,48 @@ export default function LawyerProfileSetup() {
     })
   }
 
-  const next = () => { setError(''); setStep(s => s + 1) }
-  const back = () => { setError(''); setStep(s => s - 1) }
+  const next = () => { setError(''); setErrorField(''); setStep(s => s + 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }
+  const back = () => { setError(''); setErrorField(''); setStep(s => s - 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }
 
   const validate = () => {
-    if (step === 0 && !form.practitioner_type) return 'Please select practitioner type'
-    if (step === 1 && !form.location) return 'Please enter your city'
-    if (step === 2 && form.primary_areas.length === 0) return 'Select at least one practice area'
-    return ''
+    if (step === 0) {
+      if (!form.practitioner_type) return { field: 'practitioner_type', msg: 'Please select your practitioner type' }
+      if (!form.phone) return { field: 'phone', msg: 'Phone number is required' }
+      if (!/^[6-9]\d{9}$/.test(form.phone)) return { field: 'phone', msg: 'Enter a valid 10-digit Indian mobile number' }
+    }
+    if (step === 1 && !form.location) return { field: 'location', msg: 'Please enter your city' }
+    if (step === 2) {
+      if (form.primary_areas.length === 0) return { field: 'primary_areas', msg: 'Select at least one practice area' }
+      if (form.primary_areas.includes('Other') && !form.other_practice_area) {
+        return { field: 'other_practice_area', msg: 'Please specify your "Other" practice area' }
+      }
+    }
+    if (step === 4 && !form.fee_60min) return { field: 'fee_60min', msg: 'Hourly consultation fee is required' }
+    return null
   }
 
   const handleNext = () => {
     const err = validate()
-    if (err) { setError(err); return }
+    if (err) {
+      setError(err.msg)
+      setErrorField(err.field)
+      // Scroll to and focus the field
+      setTimeout(() => {
+        const el = fieldRefs.current[err.field]
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          if ('focus' in el && typeof (el as any).focus === 'function') (el as any).focus()
+        }
+      }, 100)
+      return
+    }
     next()
   }
 
   const handleSubmit = async () => {
+    const err = validate()
+    if (err) { setError(err.msg); setErrorField(err.field); return }
+    
     setLoading(true)
     setError('')
     const supabase = createClient()
@@ -153,24 +216,28 @@ export default function LawyerProfileSetup() {
       form.bio_why && `Clients choose me because ${form.bio_why}.`,
     ].filter(Boolean).join(' ')
 
-    const { error: err } = await supabase.from('lawyer_profiles').upsert({
+    const allAreas = [...form.primary_areas.filter(a => a !== 'Other'), ...form.sub_areas]
+    if (form.primary_areas.includes('Other') && form.other_practice_area) {
+      allAreas.push(form.other_practice_area)
+    }
+
+    const { error: err2 } = await supabase.from('lawyer_profiles').upsert({
       id: user.id,
       first_name: user.user_metadata?.first_name || '',
       last_name: user.user_metadata?.last_name || '',
       title: form.title,
       location: form.location,
       about: bio || null,
-      consultation_fee: form.fee_60min ? `₹${form.fee_60min}/hr` : form.fee_30min ? `₹${form.fee_30min}/30min` : '',
-      practice_areas: [...form.primary_areas, ...form.sub_areas],
+      consultation_fee: form.fee_60min ? `₹${form.fee_60min}/hr` : '',
+      practice_areas: allAreas,
       languages: form.languages,
       education: [form.bar_enrollment ? `Bar Enrollment: ${form.bar_enrollment}` : ''].filter(Boolean),
-      rating: 0,
-      reviews: 0,
-      approved: false,
+      rating: 0, reviews: 0, approved: false,
       practitioner_type: form.practitioner_type,
       firm_name: form.firm_name,
       years_experience: form.years_experience,
       bar_council_state: form.bar_council_state,
+      phone: form.phone,
       courts: form.courts,
       work_mode: form.work_mode,
       availability: form.availability,
@@ -182,12 +249,18 @@ export default function LawyerProfileSetup() {
       fee_15min: form.fee_15min,
       fee_30min: form.fee_30min,
       fee_60min: form.fee_60min,
+      other_practice_area: form.other_practice_area,
     })
 
-    if (err) { setError('Failed to save: ' + err.message); setLoading(false); return }
+    if (err2) { setError('Failed to save: ' + err2.message); setLoading(false); return }
+    
+    // Clear draft from localStorage
+    localStorage.removeItem(STORAGE_KEY)
     setSuccess(true)
-    setTimeout(() => router.push('/dashboard'), 2500)
   }
+
+  const errorClass = (fieldName: string) => 
+    errorField === fieldName ? 'ring-2 ring-red-400 border-red-400' : ''
 
   if (pageLoading) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -195,14 +268,53 @@ export default function LawyerProfileSetup() {
     </div>
   )
 
+  // ─── SUCCESS PAGE — proper next steps ────────────────────────────────────
   if (success) return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="text-center">
-        <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-gray-900">{isEditing ? 'Profile Updated!' : 'Profile Submitted!'}</h2>
-        <p className="text-gray-500 mt-2 max-w-sm mx-auto">
-          {isEditing ? 'Your profile has been updated.' : 'Your profile is under review. You\'ll get a verified badge once approved.'}
-          {' '}Redirecting to dashboard...
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-10">
+      <div className="max-w-lg w-full bg-white rounded-2xl border border-gray-200 shadow-sm p-8 text-center">
+        <div className="w-16 h-16 bg-green-100 rounded-full mx-auto flex items-center justify-center mb-4">
+          <CheckCircle className="w-9 h-9 text-green-600" />
+        </div>
+        <h2 className="text-2xl font-extrabold text-gray-900">{isEditing ? 'Profile Updated! 🎉' : 'Welcome to Amiquz! 🎉'}</h2>
+        <p className="text-gray-500 mt-2">
+          {isEditing 
+            ? 'Your changes have been saved. Clients will now see your updated profile.'
+            : 'Your application has been submitted successfully.'}
+        </p>
+
+        {!isEditing && (
+          <div className="text-left bg-blue-50 border border-blue-100 rounded-xl p-5 mt-6">
+            <h3 className="font-bold text-blue-900 mb-3">What happens next?</h3>
+            <ol className="space-y-3 text-sm text-blue-800">
+              <li className="flex gap-3">
+                <span className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs">1</span>
+                <span><strong>We review your profile</strong> within 24–48 hours. Our team verifies your Bar Council details.</span>
+              </li>
+              <li className="flex gap-3">
+                <span className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs">2</span>
+                <span><strong>You'll get a verified badge</strong> and your profile will appear in client search results.</span>
+              </li>
+              <li className="flex gap-3">
+                <span className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs">3</span>
+                <span><strong>Clients will start finding you</strong> via search and our AI assistant. We'll notify you of every enquiry by email and SMS.</span>
+              </li>
+              <li className="flex gap-3">
+                <span className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs">4</span>
+                <span><strong>You can update your profile</strong> anytime from your dashboard.</span>
+              </li>
+            </ol>
+          </div>
+        )}
+
+        <div className="mt-6 flex flex-col sm:flex-row gap-3">
+          <button onClick={() => router.push('/dashboard')}
+            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl">
+            Go to Dashboard
+          </button>
+        </div>
+
+        <p className="text-xs text-gray-400 mt-4">
+          Questions? Email us at <a href="mailto:founders@amiquz.com" className="text-blue-600 hover:underline">founders@amiquz.com</a>
         </p>
       </div>
     </div>
@@ -211,17 +323,33 @@ export default function LawyerProfileSetup() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-8">
+
+        <div className="text-center mb-6">
           <h1 className="text-2xl font-extrabold text-gray-900">
             {isEditing ? 'Update Your Profile' : 'Complete Your Lawyer Profile'}
           </h1>
           <p className="text-gray-500 text-sm mt-1">
-            {isEditing ? 'Your existing details are pre-filled — only update what needs changing.' : 'Profiles with full details get 3x more client enquiries'}
+            {isEditing 
+              ? 'Your existing details are pre-filled — only update what needs changing.' 
+              : 'Profiles with full details get 3x more client enquiries · You can edit anytime later'}
           </p>
         </div>
 
+        {/* Draft restored notice */}
+        {draftRestored && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-4 text-sm text-blue-700 flex items-center gap-2">
+            <Save className="w-4 h-4 shrink-0" />
+            <span>We restored your draft from where you left off. <button onClick={() => { setForm(EMPTY_FORM); setStep(0); localStorage.removeItem(STORAGE_KEY); setDraftRestored(false); }} className="underline font-medium">Start fresh</button></span>
+          </div>
+        )}
+
+        {/* Mobile step indicator */}
+        <div className="sm:hidden mb-4 text-center text-xs font-semibold text-gray-500">
+          Step {step + 1} of {STEPS.length} — <span className="text-blue-600">{STEPS[step].label}</span>
+        </div>
+
         {/* Progress bar */}
-        <div className="flex items-center justify-between mb-8 px-2">
+        <div className="flex items-center justify-between mb-6 px-2">
           {STEPS.map((s, i) => {
             const Icon = s.icon
             return (
@@ -245,30 +373,62 @@ export default function LawyerProfileSetup() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
-          {error && <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm mb-6">{error}</div>}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-6 flex items-start gap-2">
+              <span className="shrink-0">⚠️</span>
+              <div>
+                <p className="font-semibold">{errorField ? FIELD_LABELS[errorField] : 'Validation Error'}</p>
+                <p className="text-red-600">{error}</p>
+              </div>
+            </div>
+          )}
 
-          {/* STEP 1 */}
+          {/* STEP 1 — Identity */}
           {step === 0 && (
             <div className="space-y-5">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><User className="w-5 h-5 text-blue-500" /> Identity & Verification</h2>
+              
               <div>
                 <label className="label">Title / Designation</label>
                 <input value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. Senior Advocate, Partner" className="input" />
               </div>
+
               <div>
                 <label className="label">Practitioner Type <span className="text-red-500">*</span></label>
-                <select value={form.practitioner_type} onChange={e => set('practitioner_type', e.target.value)} className="input">
+                <select 
+                  ref={el => { fieldRefs.current['practitioner_type'] = el }}
+                  value={form.practitioner_type} 
+                  onChange={e => set('practitioner_type', e.target.value)} 
+                  className={`input ${errorClass('practitioner_type')}`}>
                   <option value="">Select type</option>
                   <option value="Individual Practitioner">Individual Practitioner</option>
                   <option value="Law Firm">Part of a Law Firm</option>
                 </select>
               </div>
+
               {form.practitioner_type === 'Law Firm' && (
                 <div>
                   <label className="label">Law Firm Name</label>
                   <input value={form.firm_name} onChange={e => set('firm_name', e.target.value)} placeholder="e.g. Sharma & Associates" className="input" />
                 </div>
               )}
+
+              <div>
+                <label className="label flex items-center gap-1"><Phone className="w-4 h-4 text-blue-500" /> Phone Number <span className="text-red-500">*</span></label>
+                <div className="flex gap-2">
+                  <span className="input bg-gray-50 text-gray-500 w-16 flex items-center justify-center font-medium">+91</span>
+                  <input 
+                    ref={el => { fieldRefs.current['phone'] = el }}
+                    type="tel"
+                    value={form.phone}
+                    onChange={e => set('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    placeholder="10-digit mobile number"
+                    maxLength={10}
+                    className={`input flex-1 ${errorClass('phone')}`} />
+                </div>
+                <p className="text-xs text-gray-400 mt-1">Clients won't see this. We use it to notify you of enquiries via SMS/WhatsApp.</p>
+              </div>
+
               <div>
                 <label className="label">Years of Experience</label>
                 <select value={form.years_experience} onChange={e => set('years_experience', e.target.value)} className="input">
@@ -279,6 +439,7 @@ export default function LawyerProfileSetup() {
                   <option value="10+">10+ years</option>
                 </select>
               </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="label">Bar Council Enrollment No.</label>
@@ -295,13 +456,18 @@ export default function LawyerProfileSetup() {
             </div>
           )}
 
-          {/* STEP 2 */}
+          {/* STEP 2 — Location */}
           {step === 1 && (
             <div className="space-y-5">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><MapPin className="w-5 h-5 text-blue-500" /> Location & Availability</h2>
               <div>
                 <label className="label">Primary City <span className="text-red-500">*</span></label>
-                <input value={form.location} onChange={e => set('location', e.target.value)} placeholder="e.g. Bengaluru, Karnataka" className="input" />
+                <input 
+                  ref={el => { fieldRefs.current['location'] = el }}
+                  value={form.location} 
+                  onChange={e => set('location', e.target.value)} 
+                  placeholder="e.g. Bengaluru, Karnataka" 
+                  className={`input ${errorClass('location')}`} />
               </div>
               <div>
                 <label className="label">Courts You Practice In</label>
@@ -333,11 +499,11 @@ export default function LawyerProfileSetup() {
             </div>
           )}
 
-          {/* STEP 3 */}
+          {/* STEP 3 — Practice Areas */}
           {step === 2 && (
             <div className="space-y-5">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><Briefcase className="w-5 h-5 text-blue-500" /> Practice Areas</h2>
-              <div>
+              <div ref={el => { fieldRefs.current['primary_areas'] = el }}>
                 <label className="label">Primary Practice Areas <span className="text-red-500">*</span> <span className="text-gray-400 font-normal">(max 3)</span></label>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {PRIMARY_AREAS.map(a => (
@@ -354,7 +520,20 @@ export default function LawyerProfileSetup() {
                   ))}
                 </div>
               </div>
-              {form.primary_areas.length > 0 && (
+
+              {form.primary_areas.includes('Other') && (
+                <div>
+                  <label className="label">Specify your "Other" practice area <span className="text-red-500">*</span></label>
+                  <input
+                    ref={el => { fieldRefs.current['other_practice_area'] = el }}
+                    value={form.other_practice_area}
+                    onChange={e => set('other_practice_area', e.target.value)}
+                    placeholder="e.g. Aviation Law, Sports Law, Maritime Law"
+                    className={`input ${errorClass('other_practice_area')}`} />
+                </div>
+              )}
+
+              {form.primary_areas.filter(a => a !== 'Other').length > 0 && (
                 <div>
                   <label className="label">Sub-specializations</label>
                   <div className="flex flex-wrap gap-2 mt-1">
@@ -365,6 +544,7 @@ export default function LawyerProfileSetup() {
                   </div>
                 </div>
               )}
+
               <div>
                 <label className="label flex items-center gap-1"><Globe className="w-4 h-4 text-blue-500" /> Languages</label>
                 <div className="flex flex-wrap gap-2 mt-1">
@@ -377,7 +557,7 @@ export default function LawyerProfileSetup() {
             </div>
           )}
 
-          {/* STEP 4 */}
+          {/* STEP 4 — Experience */}
           {step === 3 && (
             <div className="space-y-5">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><Star className="w-5 h-5 text-blue-500" /> Experience & Proof</h2>
@@ -435,14 +615,29 @@ export default function LawyerProfileSetup() {
             </div>
           )}
 
-          {/* STEP 5 */}
+          {/* STEP 5 — Pricing */}
           {step === 4 && (
             <div className="space-y-5">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><DollarSign className="w-5 h-5 text-blue-500" /> Pricing & Services</h2>
+              
+              <div ref={el => { fieldRefs.current['fee_60min'] = el }}>
+                <label className="label">Hourly Consultation Fee (₹) <span className="text-red-500">*</span></label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">₹</span>
+                  <input 
+                    type="number" 
+                    value={form.fee_60min}
+                    onChange={e => set('fee_60min', e.target.value)} 
+                    placeholder="2000"
+                    className={`input pl-8 ${errorClass('fee_60min')}`} />
+                </div>
+                <p className="text-xs text-gray-400 mt-1">This is what most clients see and book</p>
+              </div>
+
               <div>
-                <label className="label">Consultation Fees (₹)</label>
-                <div className="grid grid-cols-3 gap-3 mt-1">
-                  {[['fee_15min', '15 min'], ['fee_30min', '30 min'], ['fee_60min', '60 min']].map(([key, label]) => (
+                <label className="label">Other duration fees <span className="text-gray-400 font-normal">(optional)</span></label>
+                <div className="grid grid-cols-2 gap-3 mt-1">
+                  {[['fee_15min', '15 min'], ['fee_30min', '30 min']].map(([key, label]) => (
                     <div key={key}>
                       <label className="text-xs text-gray-500 mb-1 block">{label}</label>
                       <div className="relative">
@@ -454,6 +649,7 @@ export default function LawyerProfileSetup() {
                   ))}
                 </div>
               </div>
+
               <div>
                 <label className="label">Services You Offer</label>
                 <div className="flex flex-col gap-2 mt-1">
@@ -465,8 +661,9 @@ export default function LawyerProfileSetup() {
                   ))}
                 </div>
               </div>
+
               <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-sm text-green-800">
-                🎉 Almost done! After submission your profile will be reviewed and you'll get a <strong>Verified badge</strong> within 24 hours.
+                🎉 Almost done! After submission your profile will be reviewed within 24–48 hours.
               </div>
             </div>
           )}
@@ -492,7 +689,13 @@ export default function LawyerProfileSetup() {
             )}
           </div>
         </div>
-        <p className="text-center text-xs text-gray-400 mt-4">Step {step + 1} of {STEPS.length} · Your data is safe and secure</p>
+
+        <div className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-2">
+          {autoSavedAt && !isEditing && (
+            <><Save className="w-3 h-3" /> Draft auto-saved at {autoSavedAt} · </>
+          )}
+          Step {step + 1} of {STEPS.length}
+        </div>
       </div>
 
       <style jsx>{`
