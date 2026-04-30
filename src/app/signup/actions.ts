@@ -11,28 +11,30 @@ export async function signup(formData: FormData) {
   const password = formData.get('password') as string
   const firstName = formData.get('first-name') as string
   const lastName = formData.get('last-name') as string
-  const role = formData.get('account-type') as string || 'client'
+  const role = (formData.get('account-type') as string) || 'client'
 
-  const { error } = await supabase.auth.signUp({
+  // Check if user already exists before signing up
+  const { data: existingUser } = await supabase
+    .from('auth.users')
+    .select('id')
+    .eq('email', email)
+    .single()
+
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      data: {
-        first_name: firstName,
-        last_name: lastName,
-        role: role,
-      }
+      data: { first_name: firstName, last_name: lastName, role }
     }
   })
 
   if (error) {
-    // If user already exists, send them to login with a clear message
-    if (error.message.toLowerCase().includes('already registered') || 
-        error.message.toLowerCase().includes('already exists') ||
-        error.message.toLowerCase().includes('user already')) {
-      redirect('/login?error=' + encodeURIComponent('You already have an account. Please login instead.'))
-    }
-    redirect('/signup?error=' + encodeURIComponent(error.message))
+    redirect('/login?error=' + encodeURIComponent('You already have an account. Please login instead.'))
+  }
+
+  // Supabase returns a user with identities=[] if email already registered
+  if (data.user && data.user.identities && data.user.identities.length === 0) {
+    redirect('/login?error=' + encodeURIComponent('You already have an account. Please login instead.'))
   }
 
   revalidatePath('/', 'layout')
