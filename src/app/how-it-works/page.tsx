@@ -4,7 +4,7 @@ export default function HowItWorksPage() {
   return (
     <div className="bg-gray-50 min-h-screen py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 bg-white p-8 sm:p-12 rounded-3xl shadow-sm border border-gray-100">
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-6 tracking-tight">How LexConnect Works</h1>
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-6 tracking-tight">How Amiquz Works</h1>
         <p className="text-lg text-gray-600 mb-12">
           Finding the right legal help shouldn't be complicated. We've streamlined the entire process so you can focus on what matters.
         </p>

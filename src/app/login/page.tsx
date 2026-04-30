@@ -48,7 +48,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             </div>
 
             <button type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors">
               Sign In
             </button>
           </form>

@@ -67,7 +67,7 @@ export default function ResetPasswordPage() {
                 className="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm text-gray-900" />
             </div>
             <button type="submit" disabled={loading}
-              className="w-full flex justify-center py-3 px-4 rounded-xl shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 transition-colors">
+              className="w-full flex justify-center py-3 px-4 rounded-full shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 transition-colors">
               {loading ? 'Updating...' : 'Update Password'}
             </button>
           </form>
