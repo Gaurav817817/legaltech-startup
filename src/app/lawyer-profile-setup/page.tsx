@@ -415,12 +415,12 @@ export default function LawyerProfileSetup() {
 
               <div>
                 <label className="label flex items-center gap-1"><Phone className="w-4 h-4 text-blue-500" /> Phone Number <span className="text-red-500">*</span></label>
-                <div className="flex gap-2">
-                  <span className="input bg-gray-50 text-gray-500 w-16 flex items-center justify-center font-medium">+91</span>
-                  <input 
-                    ref={el => { fieldRefs.current['phone'] = el }}
-                    type="tel"
-                    value={form.phone}
+               <div className="flex gap-2 items-stretch">
+  <div className="bg-gray-100 border border-gray-300 rounded-lg px-3 flex items-center text-gray-600 font-medium text-sm shrink-0">+91</div>
+  <input 
+    ref={el => { fieldRefs.current['phone'] = el }}
+    type="tel"
+    value={form.phone}
                     onChange={e => set('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
                     placeholder="10-digit mobile number"
                     maxLength={10}
