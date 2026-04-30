@@ -1,5 +1,9 @@
-import { Briefcase, Users, Clock, CheckCircle, Edit, Eye, Phone, Mail } from 'lucide-react';
+'use client'
+
+import { Briefcase, Users, Clock, CheckCircle, Edit, Eye, Phone, Mail, LogOut } from 'lucide-react';
 import Link from 'next/link';
+import { createClient } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
 
 interface Enquiry {
   id: string
@@ -12,7 +16,15 @@ interface Enquiry {
 }
 
 export default function LawyerDashboard({ user, enquiries }: { user: any; enquiries: Enquiry[] }) {
+  const router = useRouter()
   const firstName = user.user_metadata?.first_name || 'there'
+
+  const handleLogout = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/')
+    router.refresh()
+  }
 
   return (
     <div className="space-y-6">
@@ -21,9 +33,14 @@ export default function LawyerDashboard({ user, enquiries }: { user: any; enquir
           <h2 className="text-2xl font-bold text-gray-900">Welcome, {firstName} 👋</h2>
           <p className="text-gray-500 text-sm mt-1">Your lawyer dashboard — manage your profile and enquiries here.</p>
         </div>
-        <Link href="/lawyer-profile-setup" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 flex items-center gap-2 shadow-sm">
-          <Edit className="w-4 h-4" /> Edit Profile
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/lawyer-profile-setup" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 flex items-center gap-2 shadow-sm">
+            <Edit className="w-4 h-4" /> Edit Profile
+          </Link>
+          <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-red-600 border border-red-200 hover:bg-red-50 transition-colors">
+            <LogOut className="w-4 h-4" /> Logout
+          </button>
+        </div>
       </div>
 
       {/* Pending approval banner */}
