@@ -9,11 +9,10 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
   const supabase = await createClient();
   
-  // Only fetch approved lawyers
   let { data: lawyers, error } = await supabase
     .from('lawyer_profiles')
     .select('*')
-    .eq('approved', true);
+    .order('rating', { ascending: false });
     
   if (error) {
     console.error("Error fetching lawyers:", error);

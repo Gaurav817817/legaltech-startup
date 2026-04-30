@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
+import { setLawyerApproved } from './actions'
 
 // ----------------------------------------------------------------
 // IMPORTANT: Set your own email below. Only you can access this page.
@@ -68,7 +69,8 @@ export default async function AdminPage() {
                   <th className="text-left px-6 py-3 font-semibold text-gray-600">Location</th>
                   <th className="text-left px-6 py-3 font-semibold text-gray-600">Fee</th>
                   <th className="text-left px-6 py-3 font-semibold text-gray-600">Joined</th>
-                  <th className="text-left px-6 py-3 font-semibold text-gray-600">Profile</th>
+                  <th className="text-left px-6 py-3 font-semibold text-gray-600">Status</th>
+                  <th className="text-left px-6 py-3 font-semibold text-gray-600">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -91,13 +93,23 @@ export default async function AdminPage() {
                       })}
                     </td>
                     <td className="px-6 py-4">
-                      <a
-                        href={`/lawyers/${lawyer.id}`}
-                        className="text-blue-600 hover:underline font-medium"
-                        target="_blank"
-                      >
-                        View →
-                      </a>
+                      {lawyer.approved ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Approved</span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 flex items-center gap-3">
+                      <a href={`/lawyers/${lawyer.id}`} className="text-blue-600 hover:underline font-medium text-sm" target="_blank">View →</a>
+                      {lawyer.approved ? (
+                        <form action={async () => { 'use server'; await setLawyerApproved(lawyer.id, false) }}>
+                          <button type="submit" className="text-xs text-red-600 hover:underline font-medium">Revoke</button>
+                        </form>
+                      ) : (
+                        <form action={async () => { 'use server'; await setLawyerApproved(lawyer.id, true) }}>
+                          <button type="submit" className="text-xs bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700 font-medium">Approve</button>
+                        </form>
+                      )}
                     </td>
                   </tr>
                 ))}
