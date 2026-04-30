@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai('gpt-4o-mini'),
-    system: `You are a helpful legal intake assistant for LegalLink. 
+    system: `You are a helpful legal intake assistant for Amiquz.
 Your job is to:
 1. Briefly understand the user's legal problem.
 2. Provide general, non-advisory legal context.

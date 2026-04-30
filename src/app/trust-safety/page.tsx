@@ -4,7 +4,7 @@ export default function TrustSafetyPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 bg-white p-8 sm:p-12 rounded-3xl shadow-sm border border-gray-100">
         <h1 className="text-4xl font-extrabold text-gray-900 mb-6 tracking-tight">Trust & Safety</h1>
         <p className="text-lg text-gray-600 mb-8">
-          At LexConnect, your security and trust are our top priorities. Here is how we ensure a safe platform for both clients and attorneys.
+          At Amiquz, your security and trust are our top priorities. Here is how we ensure a safe platform for both clients and attorneys.
         </p>
 
         <div className="space-y-8">
@@ -32,7 +32,7 @@ export default function TrustSafetyPage() {
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">4. Authentic Reviews</h2>
             <p className="text-gray-600 leading-relaxed">
-              We operate a closed-loop review system. Only clients who have actually booked and completed a consultation through LexConnect can leave a review, ensuring absolute authenticity.
+              We operate a closed-loop review system. Only clients who have actually booked and completed a consultation through Amiquz can leave a review, ensuring absolute authenticity.
             </p>
           </section>
         </div>

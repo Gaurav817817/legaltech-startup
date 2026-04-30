@@ -7,7 +7,7 @@ export default function ForLawyersPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-4">Grow Your Practice with LexConnect</h1>
+          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-4">Grow Your Practice with Amiquz</h1>
           <p className="text-lg text-gray-600">
             Connect directly with high-intent clients actively seeking legal representation in your area of expertise.
           </p>
@@ -35,7 +35,7 @@ export default function ForLawyersPage() {
               <Briefcase className="w-8 h-8 text-blue-600" />
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-3">Seamless Booking</h3>
-            <p className="text-gray-600 text-sm">Sync your calendar and let clients book initial consultations directly through your LexConnect profile.</p>
+            <p className="text-gray-600 text-sm">Sync your calendar and let clients book initial consultations directly through your Amiquz profile.</p>
           </div>
         </div>
 

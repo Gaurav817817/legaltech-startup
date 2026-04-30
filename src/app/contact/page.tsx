@@ -6,7 +6,7 @@ export default function ContactPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 bg-white p-8 sm:p-12 rounded-3xl shadow-sm border border-gray-100">
         <h1 className="text-4xl font-extrabold text-gray-900 mb-6 tracking-tight">Contact Us</h1>
         <p className="text-lg text-gray-600 mb-12">
-          Have questions about LexConnect? We're here to help you navigate the platform and find the right legal professional.
+          Have questions about Amiquz? We're here to help you navigate the platform and find the right legal professional.
         </p>
 
         <div className="space-y-8">
@@ -29,7 +29,7 @@ export default function ContactPage() {
             <div>
               <h3 className="text-xl font-bold text-gray-900 mb-1">Email Us</h3>
               <p className="text-gray-600 mb-2">For general inquiries and support.</p>
-              <p className="text-gray-900 font-medium">support@lexconnect.com</p>
+              <p className="text-gray-900 font-medium">support@amiquz.com</p>
             </div>
           </div>
           
@@ -39,7 +39,7 @@ export default function ContactPage() {
             </div>
             <div>
               <h3 className="text-xl font-bold text-gray-900 mb-1">Office</h3>
-              <p className="text-gray-600 mb-2">LexConnect Headquarters</p>
+              <p className="text-gray-600 mb-2">Amiquz Headquarters</p>
               <p className="text-gray-900 font-medium">123 Legal Avenue<br />New York, NY 10001</p>
             </div>
           </div>

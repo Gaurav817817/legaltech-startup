@@ -9,7 +9,7 @@ export default function PricingPage() {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-4">Transparent Pricing</h1>
           <p className="text-lg text-gray-600">
-            For Clients, LexConnect is completely free to use. For Lawyers, we offer simple, predictable subscription tiers.
+            For Clients, Amiquz is completely free to use. For Lawyers, we offer simple, predictable subscription tiers.
           </p>
         </div>
 
