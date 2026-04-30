@@ -13,16 +13,10 @@ export async function login(formData: FormData) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
   if (error) {
-    // If no account found, send them to signup with a clear message
-    if (error.message.toLowerCase().includes('invalid login') || 
-        error.message.toLowerCase().includes('no user found') ||
-        error.message.toLowerCase().includes('invalid credentials')) {
-      redirect('/signup?error=' + encodeURIComponent('No account found with this email. Please sign up first.'))
-    }
-    redirect('/login?error=' + encodeURIComponent(error.message))
+    redirect('/login?error=' + encodeURIComponent('Wrong email or password. New here? Sign up instead.'))
   }
 
-  // Fix null role on login
+  // Fix null role
   const role = data.user?.user_metadata?.role
   if (!role) {
     await supabase.auth.updateUser({ data: { role: 'client' } })
