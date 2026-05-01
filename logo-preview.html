@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Amiquz — Navbar Style Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f1f5f9; font-family: 'Inter', sans-serif; padding: 36px 0; color: #0f172a; }
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 0 16px; }
+
+    .top { text-align: center; margin-bottom: 28px; padding: 0 16px; }
+    .top h1 {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #64748b;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .top p { font-size: 18px; font-weight: 700; }
+    .top span {
+      background: linear-gradient(90deg, #d97706, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .demo {
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(15,23,42,0.05);
+      margin-bottom: 32px;
+      border: 1px solid #e2e8f0;
+    }
+    .demo-label {
+      padding: 18px 28px 16px;
+      background: linear-gradient(180deg, #fafbfc 0%, #f1f5f9 100%);
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .demo-tag {
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+      color: #0f172a;
+      font-size: 10px;
+      letter-spacing: 1.8px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 99px;
+    }
+    .demo-tag.recommend {
+      background: linear-gradient(90deg, #10b981, #34d399);
+      color: white;
+    }
+    .demo-name { font-size: 16px; font-weight: 800; color: #0f172a; letter-spacing: -0.3px; }
+    .demo-desc { font-size: 12px; color: #64748b; margin-left: auto; max-width: 50%; text-align: right; }
+
+    /* container that simulates browser viewport showing navbar + start of hero */
+    .viewport { position: relative; height: 320px; overflow: hidden; }
+
+    /* dark hero behind every navbar, so interactions visible */
+    .hero {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 100%;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #4f46e5 100%);
+      padding-top: 130px;
+      padding-left: 60px;
+      padding-right: 60px;
+    }
+    .hero h2 {
+      color: #fff;
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      max-width: 700px;
+    }
+    .hero h2 span {
+      background: linear-gradient(90deg, #fcd34d, #fde68a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p { color: rgba(255,255,255,0.65); font-size: 14px; margin-top: 10px; }
+
+    /* === NAVBAR BASE — shared across all 3 options ====================== */
+    .nav {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 90px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      padding: 0 60px;
+      justify-content: space-between;
+    }
+
+    .logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+    .logo-text { display: flex; flex-direction: column; line-height: 1; }
+    .logo-name {
+      font-weight: 800;
+      letter-spacing: -0.7px;
+      font-size: 26px;            /* ↑ from 20 */
+      line-height: 1;
+    }
+    .logo-slogan {
+      font-size: 11.5px;          /* ↑ from 9 */
+      font-weight: 500;
+      margin-top: 5px;
+    }
+
+    .nav-links { display: flex; gap: 36px; align-items: center; }
+    .nav-links a {
+      font-size: 16px;            /* ↑ from 15 */
+      font-weight: 700;           /* ↑ from 500 */
+      text-decoration: none;
+      transition: color .2s;
+      letter-spacing: -0.2px;
+    }
+    .nav-links a.ai {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #2563eb;
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px 8px 8px;
+      border-radius: 99px;
+      border: 1.5px solid #e2e8f0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .user-pill .avatar {
+      width: 32px; height: 32px;
+      border-radius: 99px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-weight: 800;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ════════════════════════════════════════════════ */
+    /*    OPTION A — White + thin gold gradient line   */
+    /* ════════════════════════════════════════════════ */
+    .nav.a {
+      background: white;
+      border-bottom: 0;
+    }
+    .nav.a::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 1.5px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(245,158,11,0.0) 4%,
+        rgba(245,158,11,0.7) 50%,
+        rgba(245,158,11,0.0) 96%,
+        transparent 100%);
+    }
+    .nav.a .logo-name { color: #0f172a; }
+    .nav.a .logo-slogan { color: #94a3b8; }
+    .nav.a .nav-links a { color: #334155; }
+    .nav.a .user-pill { color: #334155; background: white; }
+
+    /* ════════════════════════════════════════════════ */
+    /*    OPTION B — Frosted glass + gold accent       */
+    /* ════════════════════════════════════════════════ */
+    .nav.b {
+      background: rgba(255,255,255,0.78);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+      backdrop-filter: blur(16px) saturate(160%);
+      box-shadow: 0 4px 28px rgba(15,23,42,0.08), 0 1px 0 rgba(15,23,42,0.04);
+    }
+    .nav.b::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 1.5px;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(245,158,11,0.45) 30%,
+        rgba(251,191,36,0.85) 50%,
+        rgba(245,158,11,0.45) 70%,
+        transparent);
+    }
+    .nav.b .logo-name { color: #0f172a; }
+    .nav.b .logo-slogan { color: #64748b; }
+    .nav.b .nav-links a { color: #1e293b; }
+    .nav.b .nav-links a:hover { color: #0f172a; }
+    .nav.b .user-pill {
+      background: rgba(255,255,255,0.6);
+      border-color: rgba(15,23,42,0.1);
+      color: #0f172a;
+    }
+
+    /* ════════════════════════════════════════════════ */
+    /*    OPTION C — Warm cream + serif + gold accents */
+    /* ════════════════════════════════════════════════ */
+    .nav.c {
+      background: #fefdf8;          /* warm ivory */
+      box-shadow: inset 0 -1px 0 #f1ead4;
+    }
+    .nav.c::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #d97706, transparent);
+    }
+    .nav.c .logo-name {
+      color: #0f172a;
+      font-family: 'Playfair Display', serif;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+    .nav.c .logo-slogan { color: #92725a; font-style: italic; }
+    .nav.c .nav-links { gap: 28px; }
+    .nav.c .nav-links a {
+      color: #422c10;
+      font-weight: 600;
+      position: relative;
+      padding-bottom: 4px;
+    }
+    .nav.c .nav-links a::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 1.5px;
+      background: linear-gradient(90deg, #d97706, #f59e0b);
+      transform: scaleX(0);
+      transition: transform .2s;
+    }
+    .nav.c .nav-links a:hover::after { transform: scaleX(1); }
+    .nav.c .nav-links a.ai { color: #1d4ed8; }
+    .nav.c .user-pill {
+      background: white;
+      border: 1.5px solid #e9d8a8;
+      color: #422c10;
+    }
+    .nav.c .user-pill .avatar { background: #fef3c7; color: #92400e; }
+
+    /* sizing tweaks recap (above): logo 52, name 26, slogan 11.5,
+       links 16/700, gap larger — all built into base above */
+
+    /* footer */
+    .footer { text-align: center; color: #64748b; font-size: 12px; margin-top: 28px; line-height: 1.7; padding: 0 16px; }
+  </style>
+</head>
+<body>
+
+<!-- ════ Reusable tarazu ════ -->
+<svg width="0" height="0" style="position:absolute;">
+  <defs>
+    <linearGradient id="goldDeep" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%"   stop-color="#FCD34D"/>
+      <stop offset="55%"  stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+    <symbol id="tarazu" viewBox="0 0 64 64">
+      <rect x="31" y="6" width="2" height="4.5" rx="1" fill="url(#goldDeep)"/>
+      <rect x="10" y="14.4" width="44" height="3.6" rx="1.8" fill="url(#goldDeep)"/>
+      <circle cx="11" cy="16.2" r="2.2" fill="url(#goldDeep)"/>
+      <circle cx="53" cy="16.2" r="2.2" fill="url(#goldDeep)"/>
+      <rect x="30.6" y="9.5" width="2.8" height="45" rx="1.4" fill="url(#goldDeep)"/>
+      <rect x="22" y="52.6" width="20" height="3" rx="1.5" fill="url(#goldDeep)"/>
+      <rect x="10.3" y="18.4" width="1.4" height="10.6" rx="0.7" fill="url(#goldDeep)"/>
+      <rect x="52.3" y="18.4" width="1.4" height="10.6" rx="0.7" fill="url(#goldDeep)"/>
+      <path d="M 2 29 Q 11 42 20 29" fill="none" stroke="url(#goldDeep)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M 44 29 Q 53 42 62 29" fill="none" stroke="url(#goldDeep)" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+
+<div class="wrap">
+  <div class="top">
+    <h1>Amiquz · Navbar Style Demo</h1>
+    <p>3 directions · with <span>bigger, bolder logo &amp; nav links</span></p>
+  </div>
+
+  <!-- ═══════════════════ OPTION A ═══════════════════ -->
+  <div class="demo">
+    <div class="demo-label">
+      <span class="demo-tag">Option A</span>
+      <span class="demo-name">White + Gold Accent Line</span>
+      <span class="demo-desc">Smallest change. Replaces gray bottom border with a soft gold gradient line. Safest.</span>
+    </div>
+    <div class="viewport">
+      <div class="hero">
+        <h2>Find a <span>Lawyer</span> in Minutes</h2>
+        <p>Verified · Trusted · AI-Powered</p>
+      </div>
+      <div class="nav a">
+        <a class="logo" href="#">
+          <svg width="52" height="52" viewBox="0 0 64 64"><use href="#tarazu"/></svg>
+          <div class="logo-text">
+            <span class="logo-name">Amiquz</span>
+            <span class="logo-slogan">find legal help. powered by ai.</span>
+          </div>
+        </a>
+        <div class="nav-links">
+          <a href="#">Find Lawyers</a>
+          <a href="#">Practice Areas</a>
+          <a href="#">About</a>
+          <a href="#" class="ai">✨ AI Chat</a>
+        </div>
+        <div class="user-pill"><span class="avatar">G</span> Gaurav</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════ OPTION B ═══════════════════ -->
+  <div class="demo">
+    <div class="demo-label">
+      <span class="demo-tag recommend">Option B · Recommended</span>
+      <span class="demo-name">Frosted Glass + Gold Accent</span>
+      <span class="demo-desc">Semi-transparent + backdrop-blur. Hero color bleeds through subtly. Apple/Linear/Stripe style.</span>
+    </div>
+    <div class="viewport">
+      <div class="hero">
+        <h2>Find a <span>Lawyer</span> in Minutes</h2>
+        <p>Verified · Trusted · AI-Powered</p>
+      </div>
+      <div class="nav b">
+        <a class="logo" href="#">
+          <svg width="52" height="52" viewBox="0 0 64 64"><use href="#tarazu"/></svg>
+          <div class="logo-text">
+            <span class="logo-name">Amiquz</span>
+            <span class="logo-slogan">find legal help. powered by ai.</span>
+          </div>
+        </a>
+        <div class="nav-links">
+          <a href="#">Find Lawyers</a>
+          <a href="#">Practice Areas</a>
+          <a href="#">About</a>
+          <a href="#" class="ai">✨ AI Chat</a>
+        </div>
+        <div class="user-pill"><span class="avatar">G</span> Gaurav</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════ OPTION C ═══════════════════ -->
+  <div class="demo">
+    <div class="demo-label">
+      <span class="demo-tag">Option C</span>
+      <span class="demo-name">Warm Cream + Serif Wordmark</span>
+      <span class="demo-desc">Ivory background, Playfair serif "Amiquz", gold underline on hover. Luxury law-firm feel.</span>
+    </div>
+    <div class="viewport">
+      <div class="hero">
+        <h2>Find a <span>Lawyer</span> in Minutes</h2>
+        <p>Verified · Trusted · AI-Powered</p>
+      </div>
+      <div class="nav c">
+        <a class="logo" href="#">
+          <svg width="52" height="52" viewBox="0 0 64 64"><use href="#tarazu"/></svg>
+          <div class="logo-text">
+            <span class="logo-name">Amiquz</span>
+            <span class="logo-slogan">find legal help. powered by ai.</span>
+          </div>
+        </a>
+        <div class="nav-links">
+          <a href="#">Find Lawyers</a>
+          <a href="#">Practice Areas</a>
+          <a href="#">About</a>
+          <a href="#" class="ai">✨ AI Chat</a>
+        </div>
+        <div class="user-pill"><span class="avatar">G</span> Gaurav</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="footer">
+    All three already include the size bump:<br>
+    <strong>Logo 52px</strong> (↑ from 44) · <strong>Wordmark 26px</strong> bolder (↑ from 20) · <strong>Nav links 16px / 700</strong> (↑ from 15px / 500)<br><br>
+    Tell me — <strong>A</strong>, <strong>B</strong>, or <strong>C</strong>.
+  </p>
+
+</div>
+
+</body>
+</html>
