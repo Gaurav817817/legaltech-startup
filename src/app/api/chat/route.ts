@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
-import { GoogleGenerativeAI } from '@google/generative-ai'
-=======
 import Groq from 'groq-sdk'
->>>>>>> Stashed changes
 import { createClient } from '@/utils/supabase/server'
 
 export const maxDuration = 30
@@ -98,33 +94,6 @@ async function findMatchingLawyers(matchData: Record<string, any>) {
 export async function POST(req: Request) {
   const { messages } = await req.json()
 
-<<<<<<< Updated upstream
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
-    systemInstruction: SYSTEM_PROMPT,
-  })
-
-  // Gemini uses 'user'/'model' roles; history excludes the last message (sent separately)
-  const history = messages.slice(0, -1).map((m: any) => ({
-    role: m.role === 'user' ? 'user' : 'model',
-    parts: [{ text: m.content }],
-  }))
-
-  const lastMessage = messages[messages.length - 1]
-
-  const chat = model.startChat({ history })
-  const result = await chat.sendMessage(lastMessage.content)
-  const rawText = result.response.text()
-
-  const { cleanText, matchData } = extractMatchData(rawText)
-
-  let lawyers = null
-  if (matchData?.ready_to_match) {
-    lawyers = await findMatchingLawyers(matchData)
-  }
-
-=======
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
   const completion = await groq.chat.completions.create({
@@ -146,7 +115,6 @@ export async function POST(req: Request) {
     lawyers = await findMatchingLawyers(matchData)
   }
 
->>>>>>> Stashed changes
   return Response.json({
     reply: cleanText,
     ready_to_match: matchData?.ready_to_match ?? false,

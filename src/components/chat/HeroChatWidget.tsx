@@ -101,10 +101,6 @@ export default function HeroChatWidget() {
               <div className={`px-4 py-2.5 rounded-2xl text-sm max-w-[85%] ${m.role === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white text-gray-800 rounded-tl-none shadow-md'}`}>
                 <div className="whitespace-pre-wrap">{m.content}</div>
 
-<<<<<<< Updated upstream
-                {/* Lawyer recommendations */}
-=======
->>>>>>> Stashed changes
                 {m.lawyers && m.lawyers.length > 0 && (
                   <div className="mt-3 bg-gray-50 border border-gray-100 rounded-xl p-3 shadow-inner">
                     <div className="flex items-center gap-1.5 mb-2 text-blue-800 font-semibold text-xs">
