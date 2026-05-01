@@ -78,7 +78,8 @@ export default function HeroChatWidget() {
       </div>
 
       {/* Chat Messages Area */}
-      <div className="flex-1 overflow-y-auto pr-2 space-y-4 mb-3 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto pr-2 mb-3 custom-scrollbar flex flex-col">
+        <div className="flex-1" />
         {messages.length === 0 && (
           <div className="text-center mt-4">
             <div className="bg-white/10 border border-white/20 rounded-2xl p-4 inline-block text-left relative">
@@ -92,6 +93,7 @@ export default function HeroChatWidget() {
           </div>
         )}
 
+        <div className="flex flex-col gap-3">
         {messages.map(m => (
           <div key={m.id} className="flex flex-col gap-2">
             <div className={`flex items-start gap-2 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
@@ -144,6 +146,7 @@ export default function HeroChatWidget() {
           </div>
         )}
         <div ref={messagesEndRef} />
+        </div>
       </div>
 
       {/* Input Area */}
