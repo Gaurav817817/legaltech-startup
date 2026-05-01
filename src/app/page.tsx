@@ -114,9 +114,32 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Column: Embedded AI Chat Widget */}
-          <div className="flex justify-center relative w-full h-[480px] lg:h-[600px] mt-8 lg:mt-0 z-20">
+          {/* Right Column: Desktop only — widget textarea causes iOS scroll-to-focus on mobile */}
+          <div className="hidden lg:flex justify-center relative w-full z-20">
             <HeroChatWidget />
+          </div>
+
+          {/* Mobile CTA card — replaces widget to avoid the scroll bug */}
+          <div className="lg:hidden mt-2">
+            <Link href="/intake" className="block">
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center hover:bg-white/15 transition-all">
+                <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-900/40">
+                  <Scale className="w-7 h-7 text-white" />
+                </div>
+                <h3 className="text-white font-extrabold text-xl mb-2 leading-tight">
+                  Talk to our AI.<br/>Get the right lawyer.
+                </h3>
+                <p className="text-blue-200 text-sm mb-5 leading-relaxed">
+                  Describe your situation in plain English — our AI finds the right verified lawyer for you in minutes.
+                </p>
+                <div className="bg-white text-blue-900 rounded-xl py-3.5 px-6 font-bold flex items-center justify-center gap-2 shadow-lg">
+                  Start Free AI Consultation <ArrowRight className="w-4 h-4" />
+                </div>
+                <p className="text-blue-300 text-xs mt-3 flex items-center justify-center gap-1">
+                  <ShieldCheck className="w-3 h-3" /> Confidential · Free · No sign-up needed
+                </p>
+              </div>
+            </Link>
           </div>
         </div>
 
