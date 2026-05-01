@@ -1,8 +1,12 @@
 import { MapPin, CheckCircle, Scale, Briefcase, Calendar, Users, Award } from 'lucide-react';
+import Image from 'next/image';
 import BookingWidget from '@/components/booking/BookingWidget';
 import EnquiryForm from '@/components/EnquiryForm';
 import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
+
+export const revalidate = 300;
+export const dynamicParams = true;
 
 export default async function LawyerProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -53,9 +57,12 @@ export default async function LawyerProfilePage({ params }: { params: Promise<{ 
             {/* Avatar */}
             <div className="relative shrink-0">
               {lawyer.image_url ? (
-                <img
+                <Image
                   src={lawyer.image_url}
                   alt={name}
+                  width={96}
+                  height={96}
+                  priority
                   className="w-24 h-24 rounded-full object-cover shadow-2xl"
                   style={{ border: '3px solid #F59E0B' }}
                 />

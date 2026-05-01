@@ -107,15 +107,22 @@ function extractMatchData(text: string): { cleanText: string; matchData: Record<
 
 async function findMatchingLawyers(matchData: Record<string, any>) {
   const supabase = await createClient()
-  const { data } = await supabase
+  const { practice_area, location } = matchData
+
+  let queryBuilder = supabase
     .from('lawyer_profiles')
     .select('id, first_name, last_name, practice_areas, rating, location, consultation_fee, image_url')
     .eq('approved', true)
     .order('rating', { ascending: false })
 
-  if (!data) return []
+  if (location) queryBuilder = queryBuilder.ilike('location', `%${location}%`)
+  if (practice_area) queryBuilder = queryBuilder.filter('practice_areas', 'cs', `{"${practice_area}"}`)
 
-  const { practice_area, location } = matchData
+  queryBuilder = queryBuilder.limit(20)
+
+  const { data } = await queryBuilder
+
+  if (!data) return []
 
   return data
     .map((lawyer: any) => {

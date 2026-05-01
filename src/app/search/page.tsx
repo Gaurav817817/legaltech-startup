@@ -1,5 +1,6 @@
 import { Search as SearchIcon, MapPin, Star, Filter, UserX } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/utils/supabase/server';
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string, loc?: string }> }) {
@@ -9,26 +10,30 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
   const supabase = await createClient();
   
-  let { data: lawyers, error } = await supabase
+  let queryBuilder = supabase
     .from('lawyer_profiles')
-    .select('*')
+    .select('id, first_name, last_name, title, image_url, rating, reviews, practice_areas, location, about, consultation_fee')
+    .eq('approved', true)
     .order('rating', { ascending: false });
-    
+
+  if (loc) queryBuilder = queryBuilder.ilike('location', `%${loc}%`);
+  if (query) queryBuilder = queryBuilder.or(`first_name.ilike.%${query}%,last_name.ilike.%${query}%,practice_areas.cs.{"${query}"}`);
+
+  let { data: lawyers, error } = await queryBuilder;
+
   if (error) {
     console.error("Error fetching lawyers:", error);
     lawyers = [];
   }
 
-  // Filter by search query and location
-  if ((query || loc) && lawyers) {
-    lawyers = lawyers.filter(l => {
-      const matchesQuery = !query || 
-        l.practice_areas?.some((area: string) => area.toLowerCase().includes(query.toLowerCase())) ||
-        l.first_name?.toLowerCase().includes(query.toLowerCase()) ||
-        l.last_name?.toLowerCase().includes(query.toLowerCase());
-      const matchesLoc = !loc || l.location?.toLowerCase().includes(loc.toLowerCase());
-      return matchesQuery && matchesLoc;
-    });
+  // Residual JS filter: catches substring-on-array cases DB misses (e.g. "corp" → "Corporate Law")
+  if (query && lawyers) {
+    const lq = query.toLowerCase();
+    lawyers = lawyers.filter(l =>
+      l.first_name?.toLowerCase().includes(lq) ||
+      l.last_name?.toLowerCase().includes(lq) ||
+      l.practice_areas?.some((a: string) => a.toLowerCase().includes(lq))
+    );
   }
 
   const PRACTICE_AREAS = ['Corporate Law', 'Family Law', 'Criminal Defense', 'Intellectual Property', 'Real Estate', 'Employment Law', 'Tax Law', 'Immigration', 'Startups & Tech', 'Divorce']
@@ -138,7 +143,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               <div key={lawyer.id} className="bg-white border border-gray-200 rounded-xl p-5 md:p-6 flex flex-col sm:flex-row gap-4 hover:shadow-md transition-shadow">
                 {/* Avatar — initials fallback if no image */}
                 {lawyer.image_url ? (
-                  <img src={lawyer.image_url} alt={lawyer.first_name} className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover shrink-0 mx-auto sm:mx-0" />
+                  <Image src={lawyer.image_url} alt={lawyer.first_name ?? 'Lawyer photo'} width={96} height={96} className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover shrink-0 mx-auto sm:mx-0" />
                 ) : (
                   <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mx-auto sm:mx-0">
                     <span className="text-2xl font-bold text-blue-600">
