@@ -1,14 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Star, CheckCircle, Calendar, CreditCard, Loader2, MessageCircle } from 'lucide-react';
 import Script from 'next/script';
+import { createClient } from '@/utils/supabase/client';
 
 export default function BookingWidget({ lawyer }: { lawyer: any }) {
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [showContact, setShowContact] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) return;
+      setUserEmail(session.user.email ?? '');
+      const meta = session.user.user_metadata;
+      setUserName(meta?.full_name ?? meta?.name ?? '');
+    });
+  }, []);
 
   const hasRazorpay = !!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
   const hasFee = lawyer.consultationFee && lawyer.consultationFee !== 'undefined';
@@ -46,7 +59,7 @@ export default function BookingWidget({ lawyer }: { lawyer: any }) {
           if (verifyData.success) setBookingSuccess(true);
           else alert('Payment verification failed');
         },
-        prefill: { name: 'Client User', email: 'client@example.com' },
+        prefill: { name: userName, email: userEmail },
         theme: { color: '#1d4ed8' },
       };
       const paymentObject = new (window as any).Razorpay(options);
