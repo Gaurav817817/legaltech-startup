@@ -1,6 +1,7 @@
 'use client'
 
-import { Briefcase, Users, Clock, CheckCircle, Edit, Eye, Phone, Mail, LogOut } from 'lucide-react';
+import { Briefcase, Users, Clock, CheckCircle, Edit, Eye, LogOut } from 'lucide-react';
+import EnquiryCard from './EnquiryCard';
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
@@ -85,32 +86,7 @@ export default function LawyerDashboard({ user, enquiries, isApproved }: { user:
             ) : (
               <ul className="divide-y divide-gray-100">
                 {enquiries.map((enq) => (
-                  <li key={enq.id} className="p-5 hover:bg-gray-50">
-                    <div className="flex justify-between items-start gap-2">
-                      <p className="font-semibold text-gray-900 text-sm">{enq.client_name}</p>
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${
-                        enq.status === 'new' ? 'bg-blue-100 text-blue-700' :
-                        enq.status === 'contacted' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-green-100 text-green-700'
-                      }`}>
-                        {enq.status === 'new' ? 'New' : enq.status === 'contacted' ? 'Contacted' : 'Converted'}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">{enq.issue_description}</p>
-                    <div className="mt-2 flex flex-wrap gap-3 text-xs text-gray-500">
-                      <a href={`tel:${enq.client_phone}`} className="flex items-center gap-1 text-blue-600 hover:underline font-medium">
-                        <Phone className="w-3 h-3" /> {enq.client_phone}
-                      </a>
-                      {enq.client_email && (
-                        <a href={`mailto:${enq.client_email}`} className="flex items-center gap-1 text-blue-600 hover:underline font-medium">
-                          <Mail className="w-3 h-3" /> {enq.client_email}
-                        </a>
-                      )}
-                      <span className="text-gray-400">
-                        {new Date(enq.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </span>
-                    </div>
-                  </li>
+                  <EnquiryCard key={enq.id} enquiry={enq} />
                 ))}
               </ul>
             )}
@@ -152,9 +128,15 @@ export default function LawyerDashboard({ user, enquiries, isApproved }: { user:
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Status</span>
-                <span className="font-medium text-yellow-600 flex items-center gap-1">
-                  <Clock className="w-3 h-3" /> Pending
-                </span>
+                {isApproved ? (
+                  <span className="font-medium text-green-600 flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3" /> Approved
+                  </span>
+                ) : (
+                  <span className="font-medium text-yellow-600 flex items-center gap-1">
+                    <Clock className="w-3 h-3" /> Pending
+                  </span>
+                )}
               </div>
             </div>
           </div>
