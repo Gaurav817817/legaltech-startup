@@ -169,6 +169,5 @@ export async function POST(req: Request) {
     reply: cleanText,
     ready_to_match: matchData?.ready_to_match ?? false,
     lawyers,
-    _debug: { matchData, isVaguePracticeArea, isVagueLocation },
   })
 }
