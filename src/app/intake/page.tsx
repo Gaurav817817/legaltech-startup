@@ -1,9 +1,24 @@
-// @ts-nocheck
 'use client';
-import { useChat } from '@ai-sdk/react';
 import { Send, Scale, User, AlertTriangle, ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
+
+interface Lawyer {
+  id: string
+  name: string
+  practiceAreas: string[]
+  rating: number
+  location: string
+  fee: string
+  image: string | null
+}
+
+interface Message {
+  id: string
+  role: 'user' | 'model'
+  content: string
+  lawyers?: Lawyer[]
+}
 
 const QUICK_PROMPTS = [
   '🏢 Register a startup',
@@ -14,17 +29,51 @@ const QUICK_PROMPTS = [
 
 export default function IntakeChatPage() {
   const [text, setText] = useState('');
-  const { messages, append, isLoading } = useChat({ maxSteps: 5 });
-  const messagesEndRef = useRef(null);
-  const inputRef = useRef(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleQuickPrompt = (prompt) => {
+  const sendMessage = async (content: string) => {
+    if (!content.trim() || isLoading) return;
+
+    const userMsg: Message = { id: crypto.randomUUID(), role: 'user', content }
+    const nextMessages = [...messages, userMsg]
+    setMessages(nextMessages)
+    setIsLoading(true)
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: nextMessages.map(m => ({ role: m.role, content: m.content })) }),
+      })
+      const { reply, ready_to_match, lawyers } = await res.json()
+      const aiMsg: Message = {
+        id: crypto.randomUUID(),
+        role: 'model',
+        content: reply,
+        lawyers: ready_to_match && lawyers?.length ? lawyers : undefined,
+      }
+      setMessages(prev => [...prev, aiMsg])
+    } catch {
+      setMessages(prev => [...prev, {
+        id: crypto.randomUUID(),
+        role: 'model',
+        content: 'Sorry, something went wrong. Please try again.',
+      }])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleQuickPrompt = (prompt: string) => {
     const clean = prompt.replace(/^[\p{Emoji}\s]+/u, '').trim();
-    append({ role: 'user', content: clean });
+    sendMessage(clean)
   };
 
   return (
@@ -38,7 +87,7 @@ export default function IntakeChatPage() {
           </div>
           <div>
             <h1 className="text-lg font-bold leading-tight">Amiquz AI Assistant</h1>
-            <p className="text-blue-200 text-xs mt-0.5">Powered by AI · Finds you the right lawyer</p>
+            <p className="text-blue-200 text-xs mt-0.5">Finds you the right lawyer</p>
           </div>
           <div className="ml-auto flex items-center gap-1.5 shrink-0">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
@@ -48,7 +97,7 @@ export default function IntakeChatPage() {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 max-w-3xl w-full mx-auto w-full flex flex-col overflow-y-auto pb-6">
+      <div className="flex-1 max-w-3xl w-full mx-auto flex flex-col overflow-y-auto pb-6">
 
         {/* Empty state */}
         {messages.length === 0 && (
@@ -63,7 +112,6 @@ export default function IntakeChatPage() {
               Just describe your legal problem in plain English — like you're telling a friend. Our AI will understand your situation and recommend the best verified lawyer for you.
             </p>
 
-            {/* Quick prompts — small and secondary */}
             <div className="mt-6 w-full max-w-md">
               <p className="text-xs text-gray-400 mb-2">Or pick a common situation:</p>
               <div className="flex flex-wrap gap-2 justify-center">
@@ -99,45 +147,34 @@ export default function IntakeChatPage() {
                 <div className={`px-4 py-3 rounded-2xl max-w-[85%] text-sm leading-relaxed ${m.role === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none shadow-sm'}`}>
                   <div className="whitespace-pre-wrap">{m.content}</div>
 
-                  {m.toolInvocations?.map((toolInvocation) => {
-                    if (toolInvocation.toolName === 'recommendLawyers' && toolInvocation.state === 'result') {
-                      const result = toolInvocation.result;
-                      return (
-                        <div key={toolInvocation.toolCallId} className="mt-4 bg-gray-50 border border-gray-200 rounded-xl p-4">
-                          <div className="flex items-center gap-2 mb-2 text-blue-800 font-semibold text-sm">
-                            <Scale className="w-4 h-4" /> Recommended for {result.practiceArea}
+                  {/* Lawyer recommendations */}
+                  {m.lawyers && m.lawyers.length > 0 && (
+                    <div className="mt-4 bg-gray-50 border border-gray-200 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2 text-blue-800 font-semibold text-sm">
+                        <Scale className="w-4 h-4" /> Recommended Lawyers
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        {m.lawyers.map((lawyer) => (
+                          <div key={lawyer.id} className="bg-white border border-gray-200 rounded-lg p-3 flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                              <span className="text-blue-700 font-bold text-sm">{lawyer.name?.[0]}</span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-bold text-gray-900 text-sm truncate">{lawyer.name}</p>
+                              <p className="text-xs text-gray-500 truncate">{lawyer.practiceAreas?.join(', ')}</p>
+                              {lawyer.location && <p className="text-xs text-gray-400 truncate">{lawyer.location}</p>}
+                            </div>
+                            <Link href={`/lawyers/${lawyer.id}`} className="bg-blue-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-blue-700 shrink-0 flex items-center gap-1">
+                              View <ArrowRight className="w-3 h-3" />
+                            </Link>
                           </div>
-                          <p className="text-xs text-gray-500 mb-3">{result.reasoning}</p>
-                          <div className="flex flex-col gap-2">
-                            {result.results?.length > 0 ? result.results.map((lawyer) => (
-                              <div key={lawyer.id} className="bg-white border border-gray-200 rounded-lg p-3 flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                                  <span className="text-blue-700 font-bold text-sm">{lawyer.name?.[0]}</span>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="font-bold text-gray-900 text-sm truncate">{lawyer.name}</p>
-                                  <p className="text-xs text-gray-500 truncate">{lawyer.practiceAreas?.join(', ')}</p>
-                                </div>
-                                <Link href={`/lawyers/${lawyer.id}`} className="bg-blue-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-blue-700 shrink-0 flex items-center gap-1">
-                                  View <ArrowRight className="w-3 h-3" />
-                                </Link>
-                              </div>
-                            )) : (
-                              <p className="text-sm text-gray-500 italic">No exact match found. <Link href="/contact" className="text-blue-600 underline">Contact us</Link> and we'll help manually.</p>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    }
-                    if (toolInvocation.toolName === 'recommendLawyers' && toolInvocation.state === 'call') {
-                      return (
-                        <div key={toolInvocation.toolCallId} className="text-xs text-gray-500 italic flex items-center gap-2 mt-2">
-                          <div className="animate-spin w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full" />
-                          Finding the best lawyers for you...
-                        </div>
-                      );
-                    }
-                  })}
+                        ))}
+                        {m.lawyers.length === 0 && (
+                          <p className="text-sm text-gray-500 italic">No exact match found. <Link href="/contact" className="text-blue-600 underline">Contact us</Link> and we'll help manually.</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -161,14 +198,14 @@ export default function IntakeChatPage() {
         </div>
       </div>
 
-      {/* BIG prominent input bar */}
+      {/* Input bar */}
       <div className="bg-white border-t-2 border-blue-100 shadow-2xl z-20 px-4 py-4 shrink-0">
         <div className="max-w-3xl mx-auto">
           <form
             onSubmit={(e) => {
               e.preventDefault();
               if (!text.trim()) return;
-              append({ role: 'user', content: text });
+              sendMessage(text);
               setText('');
             }}
           >
@@ -182,7 +219,7 @@ export default function IntakeChatPage() {
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
                       if (!text.trim()) return;
-                      append({ role: 'user', content: text });
+                      sendMessage(text);
                       setText('');
                     }
                   }}
