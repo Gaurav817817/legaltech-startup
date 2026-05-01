@@ -35,7 +35,7 @@ export default function IntakeChatPage() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [messages]);
 
   const sendMessage = async (content: string) => {
@@ -76,7 +76,7 @@ export default function IntakeChatPage() {
   };
 
   return (
-    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
+    <div className="h-[100dvh] bg-gray-50 flex flex-col overflow-hidden">
 
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white py-4 px-4 shadow-md shrink-0">

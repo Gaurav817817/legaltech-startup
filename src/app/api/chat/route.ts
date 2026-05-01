@@ -23,17 +23,18 @@ INFORMATION TO COLLECT (do this naturally through conversation):
 4. Specific details that help narrow the right lawyer match
 
 WHEN TO CONCLUDE — once you have all 4 fields above, or after 5 follow-up questions (whichever comes first):
-Write a warm 2–3 sentence closing message telling the user you have gathered enough to find the right lawyers for them. Do NOT ask another question.
+Write a warm 2–3 sentence closing message (statements only — NO questions, NO question marks). Tell the user you have enough to find the right lawyers. Stop there.
 
-Then on a new line append EXACTLY this block with the collected values filled in:
+Immediately after the closing message, on a new line, append EXACTLY this block:
 
 <<<MATCH_DATA>>>
 {"practice_area":"...","location":"...","urgency":"...","details":"...","ready_to_match":true}
 <<<END_MATCH_DATA>>>
 
-Rules for the JSON block:
-- The user will never see this block — it is stripped before display
-- Output it only once, only when ready_to_match is true
+CRITICAL rules for the concluding turn:
+- The closing message must contain ZERO questions and ZERO question marks
+- Do NOT ask for any more information in this turn
+- Output the <<<MATCH_DATA>>> block only once, only in the concluding turn
 - Use your best inference for any field the user did not explicitly state`
 
 const MARKER_START = '<<<MATCH_DATA>>>'
@@ -108,7 +109,16 @@ export async function POST(req: Request) {
   })
 
   const rawText = completion.choices[0].message.content ?? ''
-  const { cleanText, matchData } = extractMatchData(rawText)
+  let { cleanText, matchData } = extractMatchData(rawText)
+
+  // Guard: if the model still snuck a question into the closing message, strip it
+  if (matchData?.ready_to_match && cleanText.includes('?')) {
+    cleanText = cleanText
+      .split(/(?<=[.!?])\s+/)
+      .filter(s => !s.includes('?'))
+      .join(' ')
+      .trim()
+  }
 
   let lawyers = null
   if (matchData?.ready_to_match) {
