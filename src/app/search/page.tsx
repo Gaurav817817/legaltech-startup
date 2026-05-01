@@ -1,40 +1,56 @@
 import { Search as SearchIcon, MapPin, Star, Filter, UserX } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { createClient } from '@/utils/supabase/server';
+import { unstable_cache } from 'next/cache';
+import { createClient as createRawClient } from '@supabase/supabase-js';
+
+const fetchLawyers = unstable_cache(
+  async (query: string, loc: string) => {
+    const supabase = createRawClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+
+    let queryBuilder = supabase
+      .from('lawyer_profiles')
+      .select('id, first_name, last_name, title, image_url, rating, reviews, practice_areas, location, about, consultation_fee')
+      .eq('approved', true)
+      .order('rating', { ascending: false });
+
+    if (loc) queryBuilder = queryBuilder.ilike('location', `%${loc}%`);
+    if (query) queryBuilder = queryBuilder.or(`first_name.ilike.%${query}%,last_name.ilike.%${query}%,practice_areas.cs.{"${query}"}`);
+
+    const { data, error } = await queryBuilder;
+
+    if (error) {
+      console.error('Error fetching lawyers:', error);
+      return [];
+    }
+
+    let lawyers = data ?? [];
+
+    // Residual JS filter: catches substring-on-array cases DB misses (e.g. "corp" → "Corporate Law")
+    if (query) {
+      const lq = query.toLowerCase();
+      lawyers = lawyers.filter((l: any) =>
+        l.first_name?.toLowerCase().includes(lq) ||
+        l.last_name?.toLowerCase().includes(lq) ||
+        l.practice_areas?.some((a: string) => a.toLowerCase().includes(lq))
+      );
+    }
+
+    return lawyers;
+  },
+  ['lawyers-search'],
+  { revalidate: 60 }
+);
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string, loc?: string }> }) {
   const params = await searchParams;
   const query = params?.q || '';
   const loc = params?.loc || '';
 
-  const supabase = await createClient();
-  
-  let queryBuilder = supabase
-    .from('lawyer_profiles')
-    .select('id, first_name, last_name, title, image_url, rating, reviews, practice_areas, location, about, consultation_fee')
-    .eq('approved', true)
-    .order('rating', { ascending: false });
-
-  if (loc) queryBuilder = queryBuilder.ilike('location', `%${loc}%`);
-  if (query) queryBuilder = queryBuilder.or(`first_name.ilike.%${query}%,last_name.ilike.%${query}%,practice_areas.cs.{"${query}"}`);
-
-  let { data: lawyers, error } = await queryBuilder;
-
-  if (error) {
-    console.error("Error fetching lawyers:", error);
-    lawyers = [];
-  }
-
-  // Residual JS filter: catches substring-on-array cases DB misses (e.g. "corp" → "Corporate Law")
-  if (query && lawyers) {
-    const lq = query.toLowerCase();
-    lawyers = lawyers.filter(l =>
-      l.first_name?.toLowerCase().includes(lq) ||
-      l.last_name?.toLowerCase().includes(lq) ||
-      l.practice_areas?.some((a: string) => a.toLowerCase().includes(lq))
-    );
-  }
+  const lawyers = await fetchLawyers(query, loc);
 
   const PRACTICE_AREAS = ['Corporate Law', 'Family Law', 'Criminal Defense', 'Intellectual Property', 'Real Estate', 'Employment Law', 'Tax Law', 'Immigration', 'Startups & Tech', 'Divorce']
 
