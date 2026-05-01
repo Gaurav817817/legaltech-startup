@@ -1,16 +1,6 @@
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 import { Search, MapPin, Sparkles, Star, ShieldCheck, CheckCircle2, Scale, Clock, Users, Shield, ArrowRight } from 'lucide-react';
-
-const HeroChatWidget = dynamic(() => import('@/components/chat/HeroChatWidget'), {
-  ssr: false,
-  loading: () => (
-    <div
-      className="bg-white rounded-[28px] shadow-2xl w-full lg:w-[400px]"
-      style={{ height: '500px' }}
-    />
-  ),
-});
+import HeroChatWidget from '@/components/chat/DynamicChatWidget';
 
 export default function Home() {
   return (
