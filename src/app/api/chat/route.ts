@@ -145,7 +145,6 @@ async function findMatchingLawyers(matchData: Record<string, any>) {
 }
 
 export async function POST(req: Request) {
-  try {
   const { messages } = await req.json()
 
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
@@ -190,7 +189,4 @@ export async function POST(req: Request) {
     ready_to_match: matchData?.ready_to_match ?? false,
     lawyers,
   })
-  } catch (err: any) {
-    return Response.json({ error: err?.message ?? String(err) }, { status: 500 })
-  }
 }
