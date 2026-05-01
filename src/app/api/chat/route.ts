@@ -154,7 +154,7 @@ export async function POST(req: Request) {
   }
 
   // Server-side guard: don't show lawyers if the AI produced a match with no real data
-  const VAGUE_VALUES = ['unknown', 'unclear', 'not specified', 'none', 'general', 'various', "don't know", 'unspecified', '']
+  const VAGUE_VALUES = ['unknown', 'unclear', 'not specified', 'none', 'general', 'various', "don't know", 'unspecified']
   const isVaguePracticeArea = !matchData?.practice_area ||
     VAGUE_VALUES.some(v => matchData.practice_area.toLowerCase().includes(v))
   const isVagueLocation = !matchData?.location ||
