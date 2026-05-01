@@ -39,21 +39,36 @@ export default function Navbar() {
         <div className="flex justify-between h-20 items-center">
           
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center gap-2 group">
-              <svg width="44" height="44" viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg">
-                <rect x="0" y="0" width="54" height="54" rx="11" fill="#1d4ed8"/>
-                <line x1="27" y1="12" x2="27" y2="40" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-                <line x1="17" y1="40" x2="37" y2="40" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-                <line x1="7" y1="17" x2="47" y2="21" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-                <line x1="7" y1="17" x2="4" y2="27" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
-                <path d="M1 27 Q6 32 11 27" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
-                <line x1="47" y1="21" x2="50" y2="32" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
-                <path d="M44 32 Q50 37 56 32" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
-                <circle cx="50" cy="31" r="2" fill="#93c5fd"/>
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <svg width="44" height="44" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="amiquz-tarazu-gold" x1="20%" y1="0%" x2="80%" y2="100%">
+                    <stop offset="0%" stopColor="#FCD34D"/>
+                    <stop offset="55%" stopColor="#F59E0B"/>
+                    <stop offset="100%" stopColor="#B45309"/>
+                  </linearGradient>
+                </defs>
+                {/* Top finial */}
+                <rect x="31" y="6" width="2" height="4.5" rx="1" fill="url(#amiquz-tarazu-gold)"/>
+                {/* Balance beam */}
+                <rect x="10" y="14.4" width="44" height="3.6" rx="1.8" fill="url(#amiquz-tarazu-gold)"/>
+                {/* Beam end caps */}
+                <circle cx="11" cy="16.2" r="2.2" fill="url(#amiquz-tarazu-gold)"/>
+                <circle cx="53" cy="16.2" r="2.2" fill="url(#amiquz-tarazu-gold)"/>
+                {/* Central post */}
+                <rect x="30.6" y="9.5" width="2.8" height="45" rx="1.4" fill="url(#amiquz-tarazu-gold)"/>
+                {/* Base */}
+                <rect x="22" y="52.6" width="20" height="3" rx="1.5" fill="url(#amiquz-tarazu-gold)"/>
+                {/* Hanging chains */}
+                <rect x="10.3" y="18.4" width="1.4" height="10.6" rx="0.7" fill="url(#amiquz-tarazu-gold)"/>
+                <rect x="52.3" y="18.4" width="1.4" height="10.6" rx="0.7" fill="url(#amiquz-tarazu-gold)"/>
+                {/* Pans */}
+                <path d="M 2 29 Q 11 42 20 29" fill="none" stroke="url(#amiquz-tarazu-gold)" strokeWidth="3" strokeLinecap="round"/>
+                <path d="M 44 29 Q 53 42 62 29" fill="none" stroke="url(#amiquz-tarazu-gold)" strokeWidth="3" strokeLinecap="round"/>
               </svg>
               <div className="flex flex-col">
-                <span className="font-extrabold text-xl text-[#0f172a] leading-tight tracking-tight">Ami<span className="text-blue-600">quz</span></span>
-                <span className="text-[9px] text-gray-400 tracking-widest font-medium hidden sm:block">FIND LEGAL HELP, POWERED BY AI</span>
+                <span className="font-extrabold text-xl text-[#0f172a] leading-none tracking-tight">Amiquz</span>
+                <span className="text-[10px] text-gray-400 font-medium hidden sm:block mt-0.5">find legal help. powered by ai.</span>
               </div>
             </Link>
           </div>
