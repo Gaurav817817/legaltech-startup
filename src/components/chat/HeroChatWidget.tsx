@@ -84,8 +84,8 @@ export default function HeroChatWidget() {
             <div className="bg-white/10 border border-white/20 rounded-2xl p-4 inline-block text-left relative">
               <Bot className="w-8 h-8 mb-2 text-yellow-400" />
               <p className="text-sm text-blue-50 leading-relaxed font-medium">
-                👋 Hi there! I'm your personal legal assistant. <br/><br/>
-                Tell me briefly what's going on, and I'll find the perfect lawyer to help you right now.
+                👋 Hi there! I&apos;m your personal legal assistant. <br/><br/>
+                Tell me briefly what&apos;s going on, and I&apos;ll find the perfect lawyer to help you right now.
               </p>
               <div className="absolute -bottom-2 left-6 w-4 h-4 bg-white/10 border-r border-b border-white/20 transform rotate-45"></div>
             </div>
@@ -101,7 +101,10 @@ export default function HeroChatWidget() {
               <div className={`px-4 py-2.5 rounded-2xl text-sm max-w-[85%] ${m.role === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white text-gray-800 rounded-tl-none shadow-md'}`}>
                 <div className="whitespace-pre-wrap">{m.content}</div>
 
+<<<<<<< Updated upstream
                 {/* Lawyer recommendations */}
+=======
+>>>>>>> Stashed changes
                 {m.lawyers && m.lawyers.length > 0 && (
                   <div className="mt-3 bg-gray-50 border border-gray-100 rounded-xl p-3 shadow-inner">
                     <div className="flex items-center gap-1.5 mb-2 text-blue-800 font-semibold text-xs">

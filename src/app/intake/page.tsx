@@ -53,13 +53,21 @@ export default function IntakeChatPage() {
         body: JSON.stringify({ messages: nextMessages.map(m => ({ role: m.role, content: m.content })) }),
       })
       const { reply, ready_to_match, lawyers } = await res.json()
+<<<<<<< Updated upstream
       const aiMsg: Message = {
+=======
+      setMessages(prev => [...prev, {
+>>>>>>> Stashed changes
         id: crypto.randomUUID(),
         role: 'model',
         content: reply,
         lawyers: ready_to_match && lawyers?.length ? lawyers : undefined,
+<<<<<<< Updated upstream
       }
       setMessages(prev => [...prev, aiMsg])
+=======
+      }])
+>>>>>>> Stashed changes
     } catch {
       setMessages(prev => [...prev, {
         id: crypto.randomUUID(),
@@ -109,7 +117,7 @@ export default function IntakeChatPage() {
               Talk to our AI.<br/>Get the right lawyer.
             </h2>
             <p className="text-gray-500 text-sm mt-3 max-w-sm leading-relaxed">
-              Just describe your legal problem in plain English — like you're telling a friend. Our AI will understand your situation and recommend the best verified lawyer for you.
+              Just describe your legal problem in plain English — like you&apos;re telling a friend. Our AI will understand your situation and recommend the best verified lawyer for you.
             </p>
 
             <div className="mt-6 w-full max-w-md">
@@ -147,7 +155,10 @@ export default function IntakeChatPage() {
                 <div className={`px-4 py-3 rounded-2xl max-w-[85%] text-sm leading-relaxed ${m.role === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none shadow-sm'}`}>
                   <div className="whitespace-pre-wrap">{m.content}</div>
 
+<<<<<<< Updated upstream
                   {/* Lawyer recommendations */}
+=======
+>>>>>>> Stashed changes
                   {m.lawyers && m.lawyers.length > 0 && (
                     <div className="mt-4 bg-gray-50 border border-gray-200 rounded-xl p-4">
                       <div className="flex items-center gap-2 mb-2 text-blue-800 font-semibold text-sm">
@@ -169,9 +180,12 @@ export default function IntakeChatPage() {
                             </Link>
                           </div>
                         ))}
+<<<<<<< Updated upstream
                         {m.lawyers.length === 0 && (
                           <p className="text-sm text-gray-500 italic">No exact match found. <Link href="/contact" className="text-blue-600 underline">Contact us</Link> and we'll help manually.</p>
                         )}
+=======
+>>>>>>> Stashed changes
                       </div>
                     </div>
                   )}

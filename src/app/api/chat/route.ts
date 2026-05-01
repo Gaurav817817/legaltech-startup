@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 import { GoogleGenerativeAI } from '@google/generative-ai'
+=======
+import Groq from 'groq-sdk'
+>>>>>>> Stashed changes
 import { createClient } from '@/utils/supabase/server'
 
 export const maxDuration = 30
@@ -94,6 +98,7 @@ async function findMatchingLawyers(matchData: Record<string, any>) {
 export async function POST(req: Request) {
   const { messages } = await req.json()
 
+<<<<<<< Updated upstream
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
   const model = genAI.getGenerativeModel({
     model: 'gemini-1.5-flash',
@@ -119,6 +124,29 @@ export async function POST(req: Request) {
     lawyers = await findMatchingLawyers(matchData)
   }
 
+=======
+  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
+
+  const completion = await groq.chat.completions.create({
+    model: 'llama-3.3-70b-versatile',
+    messages: [
+      { role: 'system', content: SYSTEM_PROMPT },
+      ...messages.map((m: any) => ({
+        role: m.role === 'model' ? 'assistant' : m.role,
+        content: m.content,
+      })),
+    ],
+  })
+
+  const rawText = completion.choices[0].message.content ?? ''
+  const { cleanText, matchData } = extractMatchData(rawText)
+
+  let lawyers = null
+  if (matchData?.ready_to_match) {
+    lawyers = await findMatchingLawyers(matchData)
+  }
+
+>>>>>>> Stashed changes
   return Response.json({
     reply: cleanText,
     ready_to_match: matchData?.ready_to_match ?? false,
