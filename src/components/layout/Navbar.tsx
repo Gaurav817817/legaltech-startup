@@ -3,12 +3,14 @@ import Link from "next/link";
 import { Sparkles, Menu, X, LogOut, LayoutDashboard, User } from "lucide-react";
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
-const NAV_LINK = "relative text-[#422c10] font-semibold text-[16px] transition-colors hover:text-amber-700 " +
+const NAV_BASE = "relative font-semibold text-[16px] transition-colors " +
   "after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:h-[2px] " +
   "after:bg-gradient-to-r after:from-amber-400 after:to-amber-600 " +
-  "after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-200 after:origin-left after:rounded-full";
+  "after:transition-transform after:duration-200 after:origin-left after:rounded-full";
+const NAV_LINK = NAV_BASE + " text-[#422c10] hover:text-amber-700 after:scale-x-0 hover:after:scale-x-100";
+const NAV_LINK_ACTIVE = NAV_BASE + " text-[#b45309] after:scale-x-100";
 
 export default function Navbar() {
   const router = useRouter()
@@ -33,6 +35,9 @@ export default function Navbar() {
     router.push('/')
     router.refresh()
   }
+
+  const pathname = usePathname()
+  const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/')
 
   const firstName = user?.user_metadata?.first_name || user?.email?.split('@')[0] || 'User'
   const role = user?.user_metadata?.role || 'client'
@@ -80,12 +85,15 @@ export default function Navbar() {
 
           {/* Desktop nav */}
           <nav className="hidden md:flex space-x-8 items-center">
-            <Link href="/search" className={NAV_LINK}>Find Lawyers</Link>
-            <Link href="/practice-areas" className={NAV_LINK}>Practice Areas</Link>
-            <Link href="/about" className={NAV_LINK}>About</Link>
+            <Link href="/search" className={isActive('/search') ? NAV_LINK_ACTIVE : NAV_LINK}>Find Lawyers</Link>
+            <Link href="/practice-areas" className={isActive('/practice-areas') ? NAV_LINK_ACTIVE : NAV_LINK}>Practice Areas</Link>
+            <Link href="/about" className={isActive('/about') ? NAV_LINK_ACTIVE : NAV_LINK}>About</Link>
             <Link
               href="/intake"
-              className="relative text-amber-700 font-semibold text-[16px] flex items-center gap-1.5 transition-colors hover:text-amber-800 after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:h-[2px] after:bg-gradient-to-r after:from-amber-400 after:to-amber-600 after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-200 after:origin-left after:rounded-full"
+              className={
+                (isActive('/intake') ? NAV_LINK_ACTIVE : NAV_LINK) +
+                " flex items-center gap-1.5 !text-amber-700 hover:!text-amber-800"
+              }
             >
               <Sparkles className="w-4 h-4" /> AI Chat
             </Link>
@@ -150,12 +158,6 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-
-      {/* Gold accent center line */}
-      <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-20 rounded-full pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, #fcd34d, #f59e0b, #b45309)' }}
-      />
 
       {/* Mobile menu */}
       {isMobileMenuOpen && (
