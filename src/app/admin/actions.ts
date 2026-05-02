@@ -44,9 +44,11 @@ export async function deleteLawyer(id: string): Promise<{ error: string } | unde
   const { error: profileErr } = await admin.from('lawyer_profiles').delete().eq('id', id)
   if (profileErr) return { error: `Failed to delete profile: ${profileErr.message}` }
 
-  // 3. Delete the auth user
+  // 3. Delete the auth user (ignore "not found" — profile may exist without an auth account)
   const { error: authErr } = await admin.auth.admin.deleteUser(id)
-  if (authErr) return { error: `Failed to delete auth user: ${authErr.message}` }
+  if (authErr && !authErr.message.toLowerCase().includes('not found')) {
+    return { error: `Failed to delete auth user: ${authErr.message}` }
+  }
 
   revalidatePath('/admin')
   revalidatePath('/search')
