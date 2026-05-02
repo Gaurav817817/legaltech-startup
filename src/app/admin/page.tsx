@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import ApprovalButton from './ApprovalButton'
+import DeleteButton from './DeleteButton'
 
 const ADMIN_EMAIL = 'founders@amiquz.com'
 
@@ -145,6 +146,9 @@ function LawyerTable({ lawyers }: { lawyers: any[] }) {
               </td>
               <td className="px-6 py-4">
                 <ApprovalButton lawyerId={lawyer.id} approved={lawyer.approved ?? false} />
+              </td>
+              <td className="px-6 py-4">
+                <DeleteButton lawyerId={lawyer.id} name={`${lawyer.first_name} ${lawyer.last_name}`} />
               </td>
             </tr>
           ))}
