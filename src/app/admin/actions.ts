@@ -23,11 +23,11 @@ export async function setLawyerApproval(id: string, approved: boolean) {
   revalidatePath('/search')
 }
 
-export async function deleteLawyer(id: string) {
+export async function deleteLawyer(id: string): Promise<{ error: string } | undefined> {
   // Verify caller is admin
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user || user.email !== ADMIN_EMAIL) throw new Error('Unauthorized')
+  if (!user || user.email !== ADMIN_EMAIL) return { error: 'Unauthorized' }
 
   // Service role client — needed to delete from auth.users
   const admin = createServiceClient(
@@ -36,12 +36,17 @@ export async function deleteLawyer(id: string) {
     { auth: { autoRefreshToken: false, persistSession: false } }
   )
 
-  // Delete profile first (FK child), then auth user (FK parent)
-  const { error: profileErr } = await admin.from('lawyer_profiles').delete().eq('id', id)
-  if (profileErr) throw new Error(profileErr.message)
+  // 1. Delete enquiries referencing this lawyer (FK child of lawyer_profiles)
+  const { error: enquiryErr } = await admin.from('enquiries').delete().eq('lawyer_id', id)
+  if (enquiryErr) return { error: `Failed to delete enquiries: ${enquiryErr.message}` }
 
+  // 2. Delete the lawyer profile
+  const { error: profileErr } = await admin.from('lawyer_profiles').delete().eq('id', id)
+  if (profileErr) return { error: `Failed to delete profile: ${profileErr.message}` }
+
+  // 3. Delete the auth user
   const { error: authErr } = await admin.auth.admin.deleteUser(id)
-  if (authErr) throw new Error(authErr.message)
+  if (authErr) return { error: `Failed to delete auth user: ${authErr.message}` }
 
   revalidatePath('/admin')
   revalidatePath('/search')

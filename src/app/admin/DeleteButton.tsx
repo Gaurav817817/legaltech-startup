@@ -13,8 +13,12 @@ export default function DeleteButton({ lawyerId, name }: { lawyerId: string; nam
         <button
           onClick={async () => {
             setLoading(true)
-            try { await deleteLawyer(lawyerId) }
-            catch (e: any) { alert('Delete failed: ' + e.message); setLoading(false); setConfirm(false) }
+            const result = await deleteLawyer(lawyerId)
+            if (result?.error) {
+              alert('Delete failed: ' + result.error)
+              setLoading(false)
+              setConfirm(false)
+            }
           }}
           disabled={loading}
           className="text-xs px-2.5 py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 font-semibold transition-colors disabled:opacity-50"
