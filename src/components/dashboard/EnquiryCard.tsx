@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Phone, Mail } from 'lucide-react'
+import { Phone, Mail, MessageSquare } from 'lucide-react'
+import Link from 'next/link'
 import { updateEnquiryStatus } from '@/app/dashboard/actions'
 
 interface Enquiry {
@@ -9,23 +10,21 @@ interface Enquiry {
   client_name: string
   client_phone: string
   client_email: string | null
-  issue_description: string
+  issue_summary: string
   status: string
   created_at: string
 }
 
 const BADGE: Record<string, string> = {
-  new:         'bg-blue-100 text-blue-700',
-  contacted:   'bg-yellow-100 text-yellow-700',
-  in_progress: 'bg-green-100 text-green-700',
-  declined:    'bg-gray-100 text-gray-500',
+  pending: 'bg-amber-100 text-amber-700',
+  active:  'bg-green-100 text-green-700',
+  closed:  'bg-gray-100 text-gray-500',
 }
 
 const LABEL: Record<string, string> = {
-  new:         'New',
-  contacted:   'Contacted',
-  in_progress: 'In Progress',
-  declined:    'Declined',
+  pending: 'Awaiting Response',
+  active:  'Active',
+  closed:  'Closed',
 }
 
 export default function EnquiryCard({ enquiry }: { enquiry: Enquiry }) {
@@ -35,11 +34,11 @@ export default function EnquiryCard({ enquiry }: { enquiry: Enquiry }) {
   const update = async (next: string) => {
     const prev = status
     setLoading(next)
-    setStatus(next) // optimistic update
+    setStatus(next)
     try {
       await updateEnquiryStatus(enquiry.id, next)
     } catch {
-      setStatus(prev) // revert on error
+      setStatus(prev)
     } finally {
       setLoading(null)
     }
@@ -54,7 +53,7 @@ export default function EnquiryCard({ enquiry }: { enquiry: Enquiry }) {
         </span>
       </div>
 
-      <p className="text-sm text-gray-600 mt-1 line-clamp-2">{enquiry.issue_description}</p>
+      <p className="text-sm text-gray-600 mt-1 line-clamp-2">{enquiry.issue_summary}</p>
 
       <div className="mt-2 flex flex-wrap gap-3 text-xs text-gray-500">
         <a href={`tel:${enquiry.client_phone}`} className="flex items-center gap-1 text-blue-600 hover:underline font-medium">
@@ -70,53 +69,40 @@ export default function EnquiryCard({ enquiry }: { enquiry: Enquiry }) {
         </span>
       </div>
 
-      {/* Action buttons */}
-      <div className="mt-3 flex items-center gap-2">
-        {status === 'new' && (
-          <>
-            <button
-              onClick={() => update('contacted')}
-              disabled={loading !== null}
-              className="text-xs px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 font-semibold transition-colors disabled:opacity-50"
-            >
-              {loading === 'contacted' ? '…' : 'Mark Contacted'}
-            </button>
-            <button
-              onClick={() => update('declined')}
-              disabled={loading !== null}
-              className="text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 font-medium transition-colors disabled:opacity-50"
-            >
-              {loading === 'declined' ? '…' : 'Decline'}
-            </button>
-          </>
-        )}
-
-        {status === 'contacted' && (
-          <>
-            <button
-              onClick={() => update('in_progress')}
-              disabled={loading !== null}
-              className="text-xs px-3 py-1.5 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 font-semibold transition-colors disabled:opacity-50"
-            >
-              {loading === 'in_progress' ? '…' : 'In Progress'}
-            </button>
-            <button
-              onClick={() => update('declined')}
-              disabled={loading !== null}
-              className="text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 font-medium transition-colors disabled:opacity-50"
-            >
-              {loading === 'declined' ? '…' : 'Decline'}
-            </button>
-          </>
-        )}
-
-        {(status === 'in_progress' || status === 'declined') && (
+      <div className="mt-3 flex items-center gap-2 flex-wrap">
+        <Link
+          href={`/conversation/${enquiry.id}`}
+          className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 border border-blue-200 hover:border-blue-400 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-all"
+        >
+          <MessageSquare className="w-3.5 h-3.5" /> Open Chat
+        </Link>
+        {status === 'pending' && (
           <button
-            onClick={() => update('new')}
+            onClick={() => update('active')}
+            disabled={loading !== null}
+            className="text-xs px-3 py-1.5 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 font-semibold transition-colors disabled:opacity-50"
+          >
+            {loading === 'active' ? '…' : 'Mark Active'}
+          </button>
+        )}
+
+        {status === 'active' && (
+          <button
+            onClick={() => update('closed')}
+            disabled={loading !== null}
+            className="text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 font-semibold transition-colors disabled:opacity-50"
+          >
+            {loading === 'closed' ? '…' : 'Close'}
+          </button>
+        )}
+
+        {status === 'closed' && (
+          <button
+            onClick={() => update('active')}
             disabled={loading !== null}
             className="text-xs text-gray-400 hover:text-gray-600 underline transition-colors disabled:opacity-50"
           >
-            {loading === 'new' ? '…' : 'Reopen'}
+            {loading === 'active' ? '…' : 'Reopen'}
           </button>
         )}
       </div>

@@ -11,7 +11,7 @@ interface Enquiry {
   client_name: string
   client_phone: string
   client_email: string | null
-  issue_description: string
+  issue_summary: string
   status: string
   created_at: string
 }
