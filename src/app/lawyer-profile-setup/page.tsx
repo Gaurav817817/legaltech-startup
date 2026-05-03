@@ -232,7 +232,8 @@ export default function LawyerProfileSetup() {
       practice_areas: allAreas,
       languages: form.languages,
       education: [form.bar_enrollment ? `Bar Enrollment: ${form.bar_enrollment}` : ''].filter(Boolean),
-      rating: 0, reviews: 0, approved: false,
+      // Only set these on initial creation — never overwrite on edit
+      ...(!isEditing && { rating: 0, reviews: 0, approved: false }),
       practitioner_type: form.practitioner_type,
       firm_name: form.firm_name,
       years_experience: form.years_experience,
