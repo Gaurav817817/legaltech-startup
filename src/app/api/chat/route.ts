@@ -56,7 +56,7 @@ Meta-comment ("you didn't reply", "i said hi", "stop repeating"):
    FOLLOW-UP: Once you have issue type + location + urgency → proceed to recommendation.
    If still missing pieces → ask one more focused question.
 
-   URGENCY FAST-TRACK: If user mentions physical harm, police, arrest, court date, or imminent deadline → skip urgency question, move straight to recommendation.
+   URGENCY FAST-TRACK: If user mentions physical harm, police, arrest, court date, or imminent deadline → skip the urgency question only. You still MUST ask for their city or state if not yet known. Location is always required before recommending.
 
 ━━━ RECOMMENDATION GATE ━━━
 Only output <<<MATCH_DATA>>> with ready_to_match:true when ALL of the following are true:
@@ -80,7 +80,9 @@ Output this block only once, only when all gate conditions are met.
 - Never give case-specific legal advice
 - General legal info is allowed — always include the disclaimer
 - Never repeat a question already answered
-- Never mention AI, models, or technology`
+- Never mention AI, models, or technology
+- NEVER write a numbered or bulleted list of lawyer names — not even as examples. The platform shows real verified lawyers. Writing "1. Lawyer A", "2. Lawyer B" etc. is strictly forbidden.
+- NEVER trigger ready_to_match:true unless you know the user's city or state. If location is unknown, ask for it first.`
 
 function extractMatchData(text: string): { cleanText: string; matchData: Record<string, any> | null } {
   // Find the marker regardless of how many < > the LLM used (1-5) or extra spaces
@@ -168,6 +170,10 @@ export async function POST(req: Request) {
 
   const rawText = completion.choices[0].message.content ?? ''
   let { cleanText, matchData } = extractMatchData(rawText)
+
+  // Strip fake numbered lawyer lists — identified by em/en dash after the name
+  // e.g. "1. Lawyer A — specializes in..." — never appears in the options menu
+  cleanText = cleanText.replace(/^\d+\.\s+.+[—–].+(\n|$)/gm, '').trim()
 
   // Guard: if the model still snuck a question into the closing message, strip it
   if (matchData?.ready_to_match && cleanText.includes('?')) {
