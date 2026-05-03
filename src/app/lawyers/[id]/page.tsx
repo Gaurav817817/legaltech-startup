@@ -32,8 +32,14 @@ async function fetchLawyerFull(id: string) {
 }
 
 async function LawyerBody({ lawyerId }: { lawyerId: string }) {
-  const lawyer = await fetchLawyerFull(lawyerId);
+  const supabase = await createClient();
+  const [lawyerResult, { data: { user } }] = await Promise.all([
+    fetchLawyerFull(lawyerId),
+    supabase.auth.getUser(),
+  ]);
+  const lawyer = lawyerResult;
   if (!lawyer) return null;
+  const isAuthenticated = !!user;
 
   const name = `${lawyer.first_name} ${lawyer.last_name}`;
   const hasCredentials = lawyer.education?.length > 0 || lawyer.courts?.length > 0 || lawyer.bar_council_state;
@@ -248,7 +254,11 @@ async function LawyerBody({ lawyerId }: { lawyerId: string }) {
 
         {/* ── Right: unified contact sidebar ── */}
         <div className="lg:col-span-1">
-          <LawyerContactSidebar lawyer={sidebarLawyer} />
+          <LawyerContactSidebar
+            lawyer={sidebarLawyer}
+            isAuthenticated={isAuthenticated}
+            lawyerPath={`/lawyers/${lawyerId}`}
+          />
         </div>
 
       </div>

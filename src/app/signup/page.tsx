@@ -25,7 +25,7 @@ function PasswordStrength({ password }: { password: string }) {
   )
 }
 
-export default function SignupPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+export default function SignupPage({ searchParams }: { searchParams: Promise<{ error?: string; next?: string }> }) {
   const params = use(searchParams);
   const [accountType, setAccountType] = useState('client');
   const [password, setPassword] = useState('');
@@ -98,6 +98,7 @@ export default function SignupPage({ searchParams }: { searchParams: Promise<{ e
 
           <form className="space-y-5" action={signup} onSubmit={handleSubmit}>
             <input type="hidden" name="account-type" value={accountType} />
+            {params.next && <input type="hidden" name="next" value={params.next} />}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>

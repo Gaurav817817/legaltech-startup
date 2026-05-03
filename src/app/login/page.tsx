@@ -2,7 +2,7 @@ import Link from "next/link";
 import { login } from "./actions";
 import { Scale } from "lucide-react";
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; next?: string }> }) {
   const params = await searchParams;
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#4f46e5] flex flex-col justify-center py-12 sm:px-6 lg:px-8" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '28px 28px' }}>
@@ -30,6 +30,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           )}
 
           <form className="space-y-5" action={login}>
+            {params.next && <input type="hidden" name="next" value={params.next} />}
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1">Email address</label>
               <input id="email" name="email" type="email" required autoComplete="email"

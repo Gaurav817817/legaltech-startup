@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import {
   Star, CheckCircle, Loader2, MessageSquare,
-  Phone, Calendar, Shield, Lock,
+  Phone, Calendar, Shield, Lock, LogIn, UserPlus,
 } from 'lucide-react'
+import Link from 'next/link'
 import { submitEnquiry } from '@/app/lawyers/[id]/actions'
 
 type Tab = 'enquiry' | 'book'
@@ -19,9 +20,11 @@ interface Props {
     rating?: number | null
   }
   prefillIssue?: string
+  isAuthenticated: boolean
+  lawyerPath: string
 }
 
-export default function LawyerContactSidebar({ lawyer, prefillIssue }: Props) {
+export default function LawyerContactSidebar({ lawyer, prefillIssue, isAuthenticated, lawyerPath }: Props) {
   const [tab, setTab] = useState<Tab>('enquiry')
   const [formState, setFormState] = useState<FormState>('idle')
   const [errorMsg, setErrorMsg] = useState('')
@@ -99,8 +102,33 @@ export default function LawyerContactSidebar({ lawyer, prefillIssue }: Props) {
         </button>
       </div>
 
+      {/* Auth wall */}
+      {!isAuthenticated && (
+        <div className="p-6 text-center">
+          <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Lock className="w-7 h-7 text-blue-500" />
+          </div>
+          <p className="font-bold text-gray-900 mb-1.5">Sign in to send an enquiry</p>
+          <p className="text-sm text-gray-500 mb-5 leading-relaxed">
+            A free account keeps your enquiry private and lets {lawyer.firstName} respond directly to you.
+          </p>
+          <Link
+            href={`/login?next=${encodeURIComponent(lawyerPath)}`}
+            className="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm transition-colors mb-2.5"
+          >
+            <LogIn className="w-4 h-4" /> Sign In
+          </Link>
+          <Link
+            href={`/signup?next=${encodeURIComponent(lawyerPath)}`}
+            className="flex items-center justify-center gap-2 w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl text-sm transition-colors"
+          >
+            <UserPlus className="w-4 h-4" /> Create Free Account
+          </Link>
+        </div>
+      )}
+
       {/* Enquiry form */}
-      {tab === 'enquiry' && (
+      {isAuthenticated && tab === 'enquiry' && (
         <div className="p-5">
           {formState === 'success' ? (
             <div className="text-center py-8">
@@ -164,7 +192,7 @@ export default function LawyerContactSidebar({ lawyer, prefillIssue }: Props) {
       )}
 
       {/* Book session placeholder */}
-      {tab === 'book' && (
+      {isAuthenticated && tab === 'book' && (
         <div className="p-5 text-center py-10">
           <Calendar className="w-10 h-10 mx-auto mb-3 text-gray-200" />
           <p className="text-sm font-semibold text-gray-500 mb-1">Online booking coming soon</p>
