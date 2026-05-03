@@ -82,15 +82,23 @@ Output this block only once, only when all gate conditions are met.
 - Never repeat a question already answered
 - Never mention AI, models, or technology`
 
-// Regex handles LLM formatting drift: <<< vs <<<< vs <<, extra spaces, missing >
-const MATCH_DATA_RE = /<<+\s*MATCH_DATA\s*>>+([\s\S]*?)<<+\s*END_MATCH_DATA\s*>>+/
-
 function extractMatchData(text: string): { cleanText: string; matchData: Record<string, any> | null } {
-  const match = text.match(MATCH_DATA_RE)
-  if (!match) return { cleanText: text.trim(), matchData: null }
-  const cleanText = text.slice(0, text.indexOf(match[0])).trim()
+  // Find the marker regardless of how many < > the LLM used (1-5) or extra spaces
+  const markerIdx = text.search(/<{1,5}\s*MATCH_DATA/)
+  if (markerIdx === -1) return { cleanText: text.trim(), matchData: null }
+
+  const cleanText = text.slice(0, markerIdx).trim()
+  const afterMarker = text.slice(markerIdx)
+
+  // Extract JSON: first { to last } in the remainder (JSON is always the only object)
+  const jsonStart = afterMarker.indexOf('{')
+  const jsonEnd = afterMarker.lastIndexOf('}')
+  if (jsonStart === -1 || jsonEnd === -1 || jsonEnd <= jsonStart) {
+    return { cleanText, matchData: null }
+  }
+
   try {
-    return { cleanText, matchData: JSON.parse(match[1].trim()) }
+    return { cleanText, matchData: JSON.parse(afterMarker.slice(jsonStart, jsonEnd + 1)) }
   } catch {
     return { cleanText, matchData: null }
   }
