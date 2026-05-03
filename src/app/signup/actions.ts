@@ -36,11 +36,5 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-
-  if (role === 'lawyer') {
-    redirect('/lawyer-profile-setup')
-  } else {
-    const next = formData.get('next') as string | null
-    redirect(next?.startsWith('/') ? next : '/dashboard')
-  }
+  redirect(`/signup/verify-email?email=${encodeURIComponent(email)}`)
 }
