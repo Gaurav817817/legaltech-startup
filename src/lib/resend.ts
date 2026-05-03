@@ -113,6 +113,38 @@ export async function sendEnquiryConfirmation({
   })
 }
 
+export async function sendReminderNotification({
+  lawyerEmail,
+  lawyerName,
+  clientName,
+  issueDescription,
+}: {
+  lawyerEmail: string
+  lawyerName: string
+  clientName: string
+  issueDescription: string
+}) {
+  const html = baseTemplate(`
+    <h2 style="color:#0f172a;margin:0 0 6px;font-size:20px;">Gentle Reminder</h2>
+    <p style="color:#64748b;margin:0 0 20px;font-size:14px;">Hi ${lawyerName}, <strong style="color:#0f172a;">${clientName}</strong> is still waiting to hear from you about their enquiry on Amiquz.</p>
+
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:16px;margin-bottom:28px;">
+      <p style="margin:0 0 6px;color:#92400e;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Their Issue</p>
+      <p style="margin:0;color:#78350f;font-size:14px;line-height:1.6;">${issueDescription}</p>
+    </div>
+
+    <a href="${BASE_URL}/dashboard" style="display:inline-block;background:#1d4ed8;color:white;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:700;font-size:14px;">View in Dashboard →</a>
+    <p style="color:#94a3b8;font-size:12px;margin-top:20px;">Reply directly to the client at your earliest convenience.</p>
+  `)
+
+  return getResend().emails.send({
+    from: FROM,
+    to: lawyerEmail,
+    subject: `Reminder: ${clientName} is waiting for your response – Amiquz`,
+    html,
+  })
+}
+
 export async function sendApprovalNotification({
   lawyerEmail,
   lawyerName,
