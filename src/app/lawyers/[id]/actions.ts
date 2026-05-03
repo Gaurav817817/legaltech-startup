@@ -2,7 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
-import { sendEnquiryNotification } from '@/lib/resend'
+import { sendEnquiryNotification, sendEnquiryConfirmation } from '@/lib/resend'
 
 export async function submitEnquiry(formData: FormData) {
   const supabase = await createClient()
@@ -36,7 +36,7 @@ export async function submitEnquiry(formData: FormData) {
     return { success: false, message: 'Failed to send enquiry. Please try again.' }
   }
 
-  // Email the lawyer — fire and forget
+  // Emails — fire and forget, never block the user response
   try {
     const admin = createServiceClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -44,19 +44,30 @@ export async function submitEnquiry(formData: FormData) {
       { auth: { autoRefreshToken: false, persistSession: false } }
     )
     const { data: { user: lawyerUser } } = await admin.auth.admin.getUserById(lawyerId)
-    if (lawyerUser?.email) {
-      await sendEnquiryNotification({
-        lawyerEmail: lawyerUser.email,
-        lawyerName:  lawyerName || 'there',
-        lawyerId,
-        clientName,
-        clientPhone,
-        clientEmail: clientEmail || null,
-        issueDescription,
-      })
-    }
+
+    await Promise.allSettled([
+      lawyerUser?.email
+        ? sendEnquiryNotification({
+            lawyerEmail: lawyerUser.email,
+            lawyerName:  lawyerName || 'there',
+            lawyerId,
+            clientName,
+            clientPhone,
+            clientEmail: clientEmail || null,
+            issueDescription,
+          })
+        : Promise.resolve(),
+      user.email
+        ? sendEnquiryConfirmation({
+            clientEmail: user.email,
+            clientName,
+            lawyerName: lawyerName || 'the lawyer',
+            issueDescription,
+          })
+        : Promise.resolve(),
+    ])
   } catch (err) {
-    console.error('Enquiry email failed (non-blocking):', err)
+    console.error('Enquiry emails failed (non-blocking):', err)
   }
 
   return { success: true, message: 'Enquiry sent!', requestId: data.id }

@@ -73,6 +73,46 @@ export async function sendEnquiryNotification({
   return getResend().emails.send({ from: FROM, to: lawyerEmail, subject: `New enquiry from ${clientName} – Amiquz`, html })
 }
 
+export async function sendEnquiryConfirmation({
+  clientEmail,
+  clientName,
+  lawyerName,
+  issueDescription,
+}: {
+  clientEmail: string
+  clientName: string
+  lawyerName: string
+  issueDescription: string
+}) {
+  const html = baseTemplate(`
+    <h2 style="color:#0f172a;margin:0 0 6px;font-size:20px;">Enquiry Sent!</h2>
+    <p style="color:#64748b;margin:0 0 24px;font-size:14px;">Hi ${clientName}, your enquiry has been sent to <strong style="color:#0f172a;">${lawyerName}</strong>. Here's a summary of what you shared.</p>
+
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:16px;margin-bottom:24px;">
+      <p style="margin:0 0 6px;color:#92400e;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Your Issue</p>
+      <p style="margin:0;color:#78350f;font-size:14px;line-height:1.6;">${issueDescription}</p>
+    </div>
+
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px 20px;margin-bottom:28px;">
+      <p style="margin:0;color:#14532d;font-size:14px;line-height:1.8;">
+        ✅ ${lawyerName} has been notified and will reach out to you shortly.<br>
+        ✅ You can track this enquiry from your dashboard.<br>
+        ✅ Most lawyers respond within 24 hours.
+      </p>
+    </div>
+
+    <a href="${BASE_URL}/dashboard" style="display:inline-block;background:#1d4ed8;color:white;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:700;font-size:14px;">View Your Dashboard →</a>
+    <p style="color:#94a3b8;font-size:12px;margin-top:20px;">Questions? Contact us at founders@amiquz.com</p>
+  `)
+
+  return getResend().emails.send({
+    from: FROM,
+    to: clientEmail,
+    subject: `Your enquiry to ${lawyerName} has been sent – Amiquz`,
+    html,
+  })
+}
+
 export async function sendApprovalNotification({
   lawyerEmail,
   lawyerName,
