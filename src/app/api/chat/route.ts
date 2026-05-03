@@ -89,17 +89,15 @@ Output this block only once, only when all gate conditions are met.
 - Never repeat a question already answered
 - Never mention AI, models, or technology`
 
-const MARKER_START = '<<<MATCH_DATA>>>'
-const MARKER_END = '<<<END_MATCH_DATA>>>'
+// Regex handles LLM formatting drift: <<< vs <<<< vs <<, extra spaces, missing >
+const MATCH_DATA_RE = /<<+\s*MATCH_DATA\s*>>+([\s\S]*?)<<+\s*END_MATCH_DATA\s*>>+/
 
 function extractMatchData(text: string): { cleanText: string; matchData: Record<string, any> | null } {
-  const start = text.indexOf(MARKER_START)
-  const end = text.indexOf(MARKER_END)
-  if (start === -1 || end === -1) return { cleanText: text.trim(), matchData: null }
-  const jsonStr = text.slice(start + MARKER_START.length, end).trim()
-  const cleanText = text.slice(0, start).trim()
+  const match = text.match(MATCH_DATA_RE)
+  if (!match) return { cleanText: text.trim(), matchData: null }
+  const cleanText = text.slice(0, text.indexOf(match[0])).trim()
   try {
-    return { cleanText, matchData: JSON.parse(jsonStr) }
+    return { cleanText, matchData: JSON.parse(match[1].trim()) }
   } catch {
     return { cleanText, matchData: null }
   }
