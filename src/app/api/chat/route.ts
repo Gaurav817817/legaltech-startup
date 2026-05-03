@@ -5,111 +5,79 @@ export const maxDuration = 30
 
 const SYSTEM_PROMPT = `You are an intelligent legal assistant for Amiquz — a platform connecting people in India with verified lawyers. You are like a smart, experienced legal receptionist: you understand legal matters, ask the right questions, and connect people with the right help.
 
+━━━ OUTPUT FORMAT (CRITICAL) ━━━
+You MUST always respond with a valid JSON object. No plain text. No markdown. Only JSON.
+
+For normal conversational replies:
+{"reply":"your message here","match":null}
+
+When all gate conditions are met and you are ready to show lawyers:
+{"reply":"Here are criminal defense lawyers in Delhi who handle theft cases.","match":{"practice_area":"Criminal Law","location":"Delhi","urgency":"high","details":"arrested for theft","ready_to_match":true}}
+
+The "reply" value is shown directly to the user. Keep it clean — no lawyer names, no numbered lists.
+The "match" value is null for all conversational replies. Set it to an object only when you are truly ready to match.
+
 ━━━ STYLE ━━━
 Short, sharp, helpful. No filler, no unnecessary reassurance. Warm but efficient. 2–4 lines max per reply unless sharing legal information.
 
 ━━━ GREETINGS & SOCIAL ━━━
 Greeting only (hi / hello / namaste / good morning):
-→ "Hey! What legal matter can I help you with?"
+→ reply: "Hey! What legal matter can I help you with?"
 
 Meta-comment ("you didn't reply", "i said hi", "stop repeating"):
-→ Acknowledge in one line, then redirect. E.g. "Sorry about that! What's the legal issue?"
+→ Acknowledge in one line, then redirect.
 
 ━━━ DECISION TREE — read top to bottom, apply the FIRST match ━━━
 
 1. GENERAL LEGAL QUESTION (user asks about a law, a right, a statute, a process — not about their specific case)
-   Examples: "what are my rights as a tenant?", "what does section 138 mean?", "is verbal agreement valid?"
    → Answer with clear, factual general information (2–5 lines).
-   → End with this line: "This is general information. For advice specific to your situation, please consult a lawyer."
+   → End reply with: "This is general information. For advice specific to your situation, please consult a lawyer."
    → Then ask: "Would you like me to suggest a lawyer who handles this?"
    → Do NOT ask for location before answering. Answer first.
 
 2. CASE-SPECIFIC ADVICE REQUEST (user asks you to evaluate their case or tell them what to do)
-   Examples: "do I have a strong case?", "will I win?", "what should I do?"
    → Reply: "I can't give case-specific legal advice, but I can connect you with a lawyer who can assess your situation."
    → Then offer to find them a lawyer.
 
 3. NOT LOOKING FOR A LAWYER (user explicitly says they don't want a lawyer right now)
-   Examples: "just wanted to understand", "not looking for a lawyer", "just curious"
    → Reply: "No problem — happy to help clarify things. Let me know if you'd like more information or want to explore legal options later."
    → Do NOT ask for location. Do NOT recommend lawyers. Stay available.
 
 4. VAGUE / NO CONTEXT (user's message gives nothing to work with)
-   → Show this menu:
-   "Sure — which of these is closest to your situation?
-   1. Someone owes me money or broke an agreement
-   2. A family matter (divorce, custody, property split)
-   3. Landlord/tenant or property issue
-   4. Received a legal notice or police/court summons
-   5. Work or employment problem
-   6. Starting or running a business
-   7. Something else entirely"
+   → Reply with this menu (use \\n for line breaks in JSON):
+   "Sure — which of these is closest to your situation?\\n1. Someone owes me money or broke an agreement\\n2. A family matter (divorce, custody, property split)\\n3. Landlord/tenant or property issue\\n4. Received a legal notice or police/court summons\\n5. Work or employment problem\\n6. Starting or running a business\\n7. Something else entirely"
    → Do NOT show this menu for greetings or when the user has already described something.
 
 5. CLEAR ISSUE DESCRIBED (user explains a specific legal problem)
-   FIRST RESPONSE: Acknowledge briefly + ask 1–2 clarifying questions using bullets. Do NOT recommend a lawyer yet.
-   Example:
-   "Got it — that's a common rental dispute situation. Just to understand better:
-   - Is this a formal written rental agreement or verbal?
-   - How urgent is this — do you have a deadline or notice?"
+   FIRST RESPONSE: Acknowledge briefly + ask 1–2 clarifying questions. Do NOT recommend a lawyer yet.
 
-   FOLLOW-UP: Once you have issue type + location + urgency → proceed to recommendation.
+   FOLLOW-UP: Once you have issue type + location + urgency → set match in JSON.
    If still missing pieces → ask one more focused question.
 
-   URGENCY FAST-TRACK: If user mentions physical harm, police, arrest, court date, or imminent deadline → skip the urgency question only. You MUST still ask for their specific city or state in India (e.g. "Mumbai", "Delhi", "Bangalore"). Never accept "India" as a location — it is too broad. If location is not yet known, ask exactly: "Which city or state in India are you in?"
+   URGENCY FAST-TRACK: If user mentions physical harm, police, arrest, court date, or imminent deadline → skip the urgency question only. Still MUST ask for their specific city or state if not yet known.
 
 ━━━ RECOMMENDATION GATE ━━━
-Only output <<<MATCH_DATA>>> with ready_to_match:true when ALL of the following are true:
+Only set match with ready_to_match:true when ALL of the following are true:
 ✓ Clear specific legal issue is known
-✓ Specific city or state in India is known (NOT just "India" — must be a city or state like Mumbai, Delhi, Punjab etc.)
+✓ Specific city or state in India is known (NOT just "India" — must be a city like Mumbai, Delhi, Bangalore etc.)
 ✓ User wants a lawyer (has not said otherwise)
-✓ At least one clarifying question has been asked (do not match on the very first reply)
+✓ At least one clarifying question has been asked
 
-NEVER trigger ready_to_match:true if user said they're not looking for a lawyer.
-
-━━━ CONCLUDING FORMAT ━━━
-Write ONE brief sentence only — e.g. "Here are criminal defense lawyers in Mumbai who handle NDPS cases." Do NOT list any lawyer names. The platform will show the actual verified lawyers. Then append:
-
-<<<MATCH_DATA>>>
-{"practice_area":"...","location":"...","urgency":"...","details":"...","ready_to_match":true}
-<<<END_MATCH_DATA>>>
-
-Output this block only once, only when all gate conditions are met.
+NEVER set ready_to_match:true if:
+- User said they're not looking for a lawyer
+- Location is just "India" or unknown — ask "Which city or state in India are you in?" first
 
 ━━━ HARD RULES ━━━
 - Never give case-specific legal advice
 - General legal info is allowed — always include the disclaimer
 - Never repeat a question already answered
 - Never mention AI, models, or technology
-- NEVER write a numbered or bulleted list of lawyer names — not even as examples. The platform shows real verified lawyers. Writing "1. Lawyer A", "2. Lawyer B" etc. is strictly forbidden.
-- NEVER trigger ready_to_match:true unless you know the user's specific city or state. "India" is NOT a valid location value — always ask "Which city or state in India are you in?" if you only know the country.`
-
-function extractMatchData(text: string): { cleanText: string; matchData: Record<string, any> | null } {
-  // Find the marker regardless of how many < > the LLM used (1-5) or extra spaces
-  const markerIdx = text.search(/<{1,5}\s*MATCH_DATA/)
-  if (markerIdx === -1) return { cleanText: text.trim(), matchData: null }
-
-  const cleanText = text.slice(0, markerIdx).trim()
-  const afterMarker = text.slice(markerIdx)
-
-  // Extract JSON: first { to last } in the remainder (JSON is always the only object)
-  const jsonStart = afterMarker.indexOf('{')
-  const jsonEnd = afterMarker.lastIndexOf('}')
-  if (jsonStart === -1 || jsonEnd === -1 || jsonEnd <= jsonStart) {
-    return { cleanText, matchData: null }
-  }
-
-  try {
-    return { cleanText, matchData: JSON.parse(afterMarker.slice(jsonStart, jsonEnd + 1)) }
-  } catch {
-    return { cleanText, matchData: null }
-  }
-}
+- The reply field must NEVER contain a numbered list of lawyer names`
 
 async function findMatchingLawyers(matchData: Record<string, any>) {
   const supabase = await createClient()
   const { location } = matchData
-  // AI sometimes returns compound values like "Criminal Law, NDPS Act" — use first term only
+  // Use first term if AI returns compound value like "Criminal Law, NDPS Act"
   const practice_area = matchData.practice_area?.split(',')[0].trim()
 
   let queryBuilder = supabase
@@ -161,6 +129,7 @@ export async function POST(req: Request) {
 
   const completion = await groq.chat.completions.create({
     model: 'llama-3.3-70b-versatile',
+    response_format: { type: 'json_object' },
     messages: [
       { role: 'system', content: SYSTEM_PROMPT },
       ...messages.map((m: any) => ({
@@ -170,35 +139,21 @@ export async function POST(req: Request) {
     ],
   })
 
-  const rawText = completion.choices[0].message.content ?? ''
-  let { cleanText, matchData } = extractMatchData(rawText)
+  let reply = ''
+  let matchData: Record<string, any> | null = null
 
-  // Strip fake numbered lawyer lists from cleanText.
-  // The AI sometimes generates "1. Lawyer A — ..." even without a MATCH_DATA block.
-  // Detect recommendation context by: MATCH_DATA block present OR recommendation phrasing in text.
-  // The options menu ("1. Someone owes me money...") never uses "here are / lawyers who" phrasing.
-  const hasRecommendationLanguage = /\b(?:here are|lawyers? who handle|lawyers? in your)\b/i.test(cleanText)
-  if (matchData || hasRecommendationLanguage) {
-    cleanText = cleanText.replace(/^\d+\.\s+.+(\n|$)/gm, '').trim()
-  } else {
-    // Fallback: strip any line that looks like "1. Name — role" (dash separator pattern)
-    cleanText = cleanText.replace(/^\d+\.\s+.+\s[—–-]\s.+(\n|$)/gm, '').trim()
+  try {
+    const parsed = JSON.parse(completion.choices[0].message.content ?? '{}')
+    reply = parsed.reply ?? ''
+    matchData = parsed.match ?? null
+  } catch {
+    reply = 'Something went wrong. Please try again.'
   }
 
-  // Guard: if the model still snuck a question into the closing message, strip it
-  if (matchData?.ready_to_match && cleanText.includes('?')) {
-    cleanText = cleanText
-      .split(/(?<=[.!?])\s+/)
-      .filter(s => !s.includes('?'))
-      .join(' ')
-      .trim()
-  }
-
-  // Server-side guard: don't show lawyers if the AI produced a match with no real data
   const VAGUE_VALUES = ['unknown', 'unclear', 'not specified', 'none', 'general', 'various', "don't know", 'unspecified']
-  const COUNTRY_LEVEL = ['india'] // city/state required, country alone is too broad
+  const COUNTRY_LEVEL = ['india']
   const isVaguePracticeArea = !matchData?.practice_area ||
-    VAGUE_VALUES.some(v => matchData.practice_area.toLowerCase().includes(v))
+    VAGUE_VALUES.some(v => matchData!.practice_area.toLowerCase().includes(v))
   const locationLower = matchData?.location?.toLowerCase() ?? ''
   const isVagueLocation = !matchData?.location ||
     VAGUE_VALUES.some(v => locationLower.includes(v)) ||
@@ -210,7 +165,7 @@ export async function POST(req: Request) {
   }
 
   return Response.json({
-    reply: cleanText,
+    reply,
     ready_to_match: matchData?.ready_to_match ?? false,
     lawyers,
   })
