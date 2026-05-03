@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
-import { CheckCircle, ChevronRight, ChevronLeft, User, MapPin, Briefcase, Star, DollarSign, Globe, Phone, Save } from 'lucide-react'
+import { CheckCircle, ChevronRight, ChevronLeft, User, MapPin, Briefcase, Star, DollarSign, Globe, Phone, Save, Camera } from 'lucide-react'
 
 const BAR_COUNCIL_STATES = [
   'Bar Council of India', 'Andhra Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
@@ -66,6 +66,7 @@ const EMPTY_FORM = {
   cases_handled: '', client_types: [] as string[], notable_cases: '',
   success_rate: '', bio_specializes: '', bio_handled: '', bio_why: '',
   fee_15min: '', fee_30min: '', fee_60min: '', services: [] as string[],
+  image_url: '',
 }
 
 const STORAGE_KEY = 'amiquz_lawyer_form_draft'
@@ -82,6 +83,7 @@ export default function LawyerProfileSetup() {
   const [isEditing, setIsEditing] = useState(false)
   const [draftRestored, setDraftRestored] = useState(false)
   const [autoSavedAt, setAutoSavedAt] = useState<string>('')
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const fieldRefs = useRef<Record<string, HTMLElement | null>>({})
 
   // Pre-fill form: first try Supabase profile, then localStorage draft
@@ -124,6 +126,7 @@ export default function LawyerProfileSetup() {
           fee_30min: profile.fee_30min || '',
           fee_60min: profile.fee_60min || '',
           services: profile.services || [],
+          image_url: profile.image_url || '',
         })
         setPageLoading(false)
         return
@@ -160,6 +163,26 @@ export default function LawyerProfileSetup() {
       const arr = prev[key as keyof typeof prev] as string[]
       return { ...prev, [key]: arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val] }
     })
+  }
+
+  const uploadPhoto = async (file: File) => {
+    setUploadingPhoto(true)
+    setError('')
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const ext = file.name.split('.').pop() ?? 'jpg'
+      const path = `${user.id}.${ext}`
+      const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true })
+      if (upErr) throw upErr
+      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
+      set('image_url', publicUrl)
+    } catch (err: any) {
+      setError('Photo upload failed: ' + (err?.message ?? 'Unknown error'))
+    } finally {
+      setUploadingPhoto(false)
+    }
   }
 
   const next = () => { setError(''); setErrorField(''); setStep(s => s + 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }
@@ -251,6 +274,7 @@ export default function LawyerProfileSetup() {
       fee_30min: form.fee_30min,
       fee_60min: form.fee_60min,
       other_practice_area: form.other_practice_area,
+      ...(form.image_url && { image_url: form.image_url }),
     })
 
     if (err2) { setError('Failed to save: ' + err2.message); setLoading(false); return }
@@ -388,7 +412,34 @@ export default function LawyerProfileSetup() {
           {step === 0 && (
             <div className="space-y-5">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><User className="w-5 h-5 text-blue-500" /> Identity & Verification</h2>
-              
+
+              {/* Photo upload */}
+              <div className="flex flex-col items-center gap-2 py-2">
+                <div className="relative">
+                  {form.image_url ? (
+                    <img src={form.image_url} alt="Profile photo" className="w-24 h-24 rounded-full object-cover border-4 border-blue-100" />
+                  ) : (
+                    <div className="w-24 h-24 rounded-full bg-blue-50 border-4 border-blue-100 flex items-center justify-center">
+                      <User className="w-10 h-10 text-blue-300" />
+                    </div>
+                  )}
+                  <label htmlFor="photo-upload" className={`absolute -bottom-1 -right-1 rounded-full p-1.5 cursor-pointer border-2 border-white shadow transition-colors ${uploadingPhoto ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}>
+                    <Camera className="w-3.5 h-3.5 text-white" />
+                  </label>
+                  <input
+                    id="photo-upload"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    disabled={uploadingPhoto}
+                    onChange={e => { const f = e.target.files?.[0]; if (f) uploadPhoto(f) }}
+                  />
+                </div>
+                <p className="text-xs text-gray-400">
+                  {uploadingPhoto ? 'Uploading…' : form.image_url ? 'Click camera to change photo' : 'Add a professional photo (optional)'}
+                </p>
+              </div>
+
               <div>
                 <label className="label">Title / Designation</label>
                 <input value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. Senior Advocate, Partner" className="input" />
