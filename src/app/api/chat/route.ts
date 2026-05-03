@@ -12,7 +12,13 @@ For normal conversational replies:
 {"reply":"your message here","match":null}
 
 When all gate conditions are met and you are ready to show lawyers:
-{"reply":"Here are criminal defense lawyers in Delhi who handle theft cases.","match":{"practice_area":"Criminal Law","location":"Delhi","urgency":"high","details":"arrested for theft","ready_to_match":true}}
+{"reply":"Here are criminal defense lawyers in Delhi who handle theft cases.","match":{"practice_area":"Criminal Law","location":"Delhi","urgency":"high","details":"arrested for theft","gender":null,"ready_to_match":true}}
+
+The "gender" field is null by default. Set it to "male" or "female" ONLY when the user explicitly asks for a gender preference.
+
+For "practice_area", always use one of these standard names (pick the closest match):
+Corporate Law, Criminal Law, Family Law, Property Law, Tax Law, Cyber Law, Intellectual Property, Civil Litigation, Labour Law, Banking Law, Constitutional Law, Consumer Law
+Never use the user's raw words (e.g. "startup registration" → use "Corporate Law").
 
 The "reply" value is shown directly to the user. Keep it clean — no lawyer names, no numbered lists.
 The "match" value is null for all conversational replies. Set it to an object only when you are truly ready to match.
@@ -133,12 +139,9 @@ async function buildMessageHistory(groq: Groq, rawMessages: any[]) {
 
 async function findMatchingLawyers(matchData: Record<string, any>) {
   const supabase = await createClient()
-  const { location } = matchData
+  const { location, gender } = matchData
   const practice_area = matchData.practice_area?.split(',')[0].trim()
 
-  // Only filter by location at the DB level — exact practice_area array match
-  // is too strict (e.g. "Criminal Law" won't match "Criminal Defense").
-  // Practice area relevance is handled entirely by the scoring below.
   let queryBuilder = supabase
     .from('lawyer_profiles')
     .select('id, first_name, last_name, practice_areas, rating, location, consultation_fee, image_url, years_experience, cases_handled, success_rate')
@@ -146,6 +149,7 @@ async function findMatchingLawyers(matchData: Record<string, any>) {
     .order('rating', { ascending: false })
 
   if (location) queryBuilder = queryBuilder.ilike('location', `%${location}%`)
+  if (gender) queryBuilder = queryBuilder.ilike('gender', gender)
 
   queryBuilder = queryBuilder.limit(20)
 
@@ -223,10 +227,10 @@ export async function POST(req: Request) {
     VAGUE_VALUES.some(v => locationLower.includes(v)) ||
     COUNTRY_LEVEL.some(c => locationLower.trim() === c)
 
-  // Don't re-query if lawyers were already shown in this conversation —
-  // the AI tends to keep firing ready_to_match on follow-up questions.
-  const lawyersAlreadyShown = messages.some(
-    (m: any) => m.role === 'model' && typeof m.content === 'string' && m.content.includes('[Lawyers shown:')
+  // Don't re-query on follow-up questions (AI tends to keep firing ready_to_match).
+  // Exception: always re-query when a gender filter is specified — that's a new search.
+  const lawyersAlreadyShown = !matchData?.gender && messages.some(
+    (m: any) => m.role === 'model' && typeof m.content === 'string' && m.content.includes('[Lawyers shown')
   )
 
   let lawyers = null
