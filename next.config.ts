@@ -9,9 +9,9 @@ const nextConfig: NextConfig = {
         pathname: '/storage/v1/object/public/**',
       },
       {
-        // pravatar.cc used by test/seed lawyer data
         protocol: 'https',
-        hostname: 'i.pravatar.cc',
+        hostname: 'randomuser.me',
+        pathname: '/api/portraits/**',
       },
     ],
   },
