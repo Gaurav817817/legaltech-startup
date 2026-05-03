@@ -66,7 +66,7 @@ const EMPTY_FORM = {
   cases_handled: '', client_types: [] as string[], notable_cases: '',
   success_rate: '', bio_specializes: '', bio_handled: '', bio_why: '',
   fee_15min: '', fee_30min: '', fee_60min: '', services: [] as string[],
-  image_url: '',
+  image_url: '', gender: '',
 }
 
 const STORAGE_KEY = 'amiquz_lawyer_form_draft'
@@ -127,6 +127,7 @@ export default function LawyerProfileSetup() {
           fee_60min: profile.fee_60min || '',
           services: profile.services || [],
           image_url: profile.image_url || '',
+          gender: profile.gender || '',
         })
         setPageLoading(false)
         return
@@ -275,6 +276,7 @@ export default function LawyerProfileSetup() {
       fee_60min: form.fee_60min,
       other_practice_area: form.other_practice_area,
       ...(form.image_url && { image_url: form.image_url }),
+      ...(form.gender && { gender: form.gender }),
     })
 
     if (err2) { setError('Failed to save: ' + err2.message); setLoading(false); return }
@@ -443,6 +445,18 @@ export default function LawyerProfileSetup() {
               <div>
                 <label className="label">Title / Designation</label>
                 <input value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. Senior Advocate, Partner" className="input" />
+              </div>
+
+              <div>
+                <label className="label">Gender</label>
+                <div className="flex gap-2 mt-1">
+                  {[['male', 'Male'], ['female', 'Female'], ['other', 'Prefer not to say']].map(([val, label]) => (
+                    <button key={val} type="button" onClick={() => set('gender', val)}
+                      className={`chip ${form.gender === val ? 'chip-active' : 'chip-inactive'}`}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div>
