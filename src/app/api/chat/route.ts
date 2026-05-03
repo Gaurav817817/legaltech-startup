@@ -173,12 +173,15 @@ export async function POST(req: Request) {
   const rawText = completion.choices[0].message.content ?? ''
   let { cleanText, matchData } = extractMatchData(rawText)
 
-  // When the AI produced a recommendation block, strip ALL numbered lists from cleanText —
-  // they are always fake lawyer lists. The options menu never co-occurs with MATCH_DATA.
-  if (matchData) {
+  // Strip fake numbered lawyer lists from cleanText.
+  // The AI sometimes generates "1. Lawyer A — ..." even without a MATCH_DATA block.
+  // Detect recommendation context by: MATCH_DATA block present OR recommendation phrasing in text.
+  // The options menu ("1. Someone owes me money...") never uses "here are / lawyers who" phrasing.
+  const hasRecommendationLanguage = /\b(?:here are|lawyers? who handle|lawyers? in your)\b/i.test(cleanText)
+  if (matchData || hasRecommendationLanguage) {
     cleanText = cleanText.replace(/^\d+\.\s+.+(\n|$)/gm, '').trim()
   } else {
-    // Outside recommendation context, only strip lines with a dash separator (fake lawyer format)
+    // Fallback: strip any line that looks like "1. Name — role" (dash separator pattern)
     cleanText = cleanText.replace(/^\d+\.\s+.+\s[—–-]\s.+(\n|$)/gm, '').trim()
   }
 
