@@ -55,7 +55,14 @@ export default function HeroChatWidget() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: nextMessages.map(m => ({ role: m.role, content: m.content })) }),
+        body: JSON.stringify({
+          messages: nextMessages.map(m => ({
+            role: m.role,
+            content: m.role === 'model' && m.lawyers?.length
+              ? m.content + `\n[Lawyers shown: ${m.lawyers.map((l: Lawyer) => `${l.name}${l.fee ? ` (₹${l.fee})` : ''}`).join(', ')}]`
+              : m.content,
+          })),
+        }),
       })
       const { reply, ready_to_match, lawyers } = await res.json()
       setMessages(prev => [...prev, {
@@ -234,6 +241,7 @@ export default function HeroChatWidget() {
                               <div className="flex-1 min-w-0">
                                 <p className="font-semibold text-gray-900 text-[11px] truncate">{lawyer.name}</p>
                                 <p className="text-[10px] text-gray-500 truncate">{lawyer.practiceAreas?.[0]}</p>
+                                {lawyer.fee && <p className="text-[10px] text-blue-600 font-medium">₹{lawyer.fee}</p>}
                               </div>
                               <Link href={`/lawyers/${lawyer.id}`} className="bg-blue-600 text-white text-[10px] font-semibold px-2 py-1 rounded-md hover:bg-blue-700 shrink-0">
                                 View

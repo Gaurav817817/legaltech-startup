@@ -78,7 +78,8 @@ NEVER set ready_to_match:true if:
 - General legal info is allowed — always include the disclaimer
 - Never repeat a question already answered
 - Never mention AI, models, or technology
-- The reply field must NEVER contain a numbered list of lawyer names`
+- The reply field must NEVER contain a numbered list of lawyer names
+- Location must be where the incident happened or where the user currently is — NEVER use their hometown or place of origin for matching`
 
 // Summarize old messages using a fast small model so the main model
 // gets full context without hitting token limits on long conversations
@@ -218,8 +219,14 @@ export async function POST(req: Request) {
     VAGUE_VALUES.some(v => locationLower.includes(v)) ||
     COUNTRY_LEVEL.some(c => locationLower.trim() === c)
 
+  // Don't re-query if lawyers were already shown in this conversation —
+  // the AI tends to keep firing ready_to_match on follow-up questions.
+  const lawyersAlreadyShown = messages.some(
+    (m: any) => m.role === 'model' && typeof m.content === 'string' && m.content.includes('[Lawyers shown:')
+  )
+
   let lawyers = null
-  if (matchData?.ready_to_match && !isVaguePracticeArea && !isVagueLocation) {
+  if (matchData?.ready_to_match && !isVaguePracticeArea && !isVagueLocation && !lawyersAlreadyShown) {
     lawyers = await findMatchingLawyers(matchData)
     // If DB returned nothing despite a valid match, the location probably has no coverage
     if (lawyers.length === 0) {

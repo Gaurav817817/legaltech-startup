@@ -75,7 +75,14 @@ export default function IntakeChatPage() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: nextMessages.map(m => ({ role: m.role, content: m.content })) }),
+        body: JSON.stringify({
+          messages: nextMessages.map(m => ({
+            role: m.role,
+            content: m.role === 'model' && m.lawyers?.length
+              ? m.content + `\n[Lawyers shown: ${m.lawyers.map((l: Lawyer) => `${l.name}${l.fee ? ` (₹${l.fee})` : ''}`).join(', ')}]`
+              : m.content,
+          })),
+        }),
       })
       const { reply, ready_to_match, lawyers } = await res.json()
       setMessages(prev => [...prev, {
@@ -263,7 +270,10 @@ export default function IntakeChatPage() {
                             <div className="flex-1 min-w-0">
                               <p className="font-semibold text-gray-900 text-xs truncate">{lawyer.name}</p>
                               <p className="text-[11px] text-gray-500 truncate">{lawyer.practiceAreas?.join(', ')}</p>
-                              {lawyer.location && <p className="text-[11px] text-gray-400">{lawyer.location}</p>}
+                              <div className="flex items-center gap-2 mt-0.5">
+                                {lawyer.location && <p className="text-[11px] text-gray-400">{lawyer.location}</p>}
+                                {lawyer.fee && <p className="text-[11px] text-blue-600 font-medium">₹{lawyer.fee}</p>}
+                              </div>
                             </div>
                             <Link
                               href={`/lawyers/${lawyer.id}`}
