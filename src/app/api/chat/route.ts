@@ -79,7 +79,8 @@ NEVER set ready_to_match:true if:
 - Never repeat a question already answered
 - Never mention AI, models, or technology
 - The reply field must NEVER contain a numbered list of lawyer names
-- Location must be where the incident happened or where the user currently is — NEVER use their hometown or place of origin for matching`
+- Location must be where the incident happened or where the user currently is — NEVER use their hometown or place of origin for matching
+- When answering follow-up questions about recommended lawyers (e.g. "who is cheaper?", "who has more experience?"), ONLY use the lawyers listed in [Lawyers shown to client]. NEVER mention any other lawyer names not in that list`
 
 // Summarize old messages using a fast small model so the main model
 // gets full context without hitting token limits on long conversations

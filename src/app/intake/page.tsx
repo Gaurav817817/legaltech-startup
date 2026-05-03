@@ -82,7 +82,7 @@ export default function IntakeChatPage() {
           messages: nextMessages.map(m => ({
             role: m.role,
             content: m.role === 'model' && m.lawyers?.length
-              ? m.content + `\n[Lawyers shown to client — use this to answer follow-up questions:\n${m.lawyers.map((l: Lawyer) => `- ${l.name}: fee ₹${l.fee ?? 'N/A'}, rating ${l.rating ?? 'N/A'}/5, ${l.yearsExperience != null ? `${l.yearsExperience} yrs experience` : ''}, ${l.casesHandled != null ? `${l.casesHandled} cases handled` : ''}, ${l.successRate != null ? `${l.successRate}% success rate` : ''}, location: ${l.location}, practice: ${l.practiceAreas?.join('/')}`).join('\n')}]`
+              ? m.content + `\n[Lawyers shown to client — use this to answer follow-up questions:\n${m.lawyers.map((l: Lawyer) => `- ${l.name}: fee ${l.fee ?? 'N/A'}, rating ${l.rating ?? 'N/A'}/5, ${l.yearsExperience != null ? `${l.yearsExperience} yrs experience` : ''}, ${l.casesHandled != null ? `${l.casesHandled} cases handled` : ''}, ${l.successRate != null ? `${l.successRate}% success rate` : ''}, location: ${l.location}, practice: ${l.practiceAreas?.join('/')}`).join('\n')}]`
               : m.content,
           })),
         }),
@@ -275,7 +275,7 @@ export default function IntakeChatPage() {
                               <p className="text-[11px] text-gray-500 truncate">{lawyer.practiceAreas?.join(', ')}</p>
                               <div className="flex items-center gap-2 mt-0.5">
                                 {lawyer.location && <p className="text-[11px] text-gray-400">{lawyer.location}</p>}
-                                {lawyer.fee && <p className="text-[11px] text-blue-600 font-medium">₹{lawyer.fee}</p>}
+                                {lawyer.fee && <p className="text-[11px] text-blue-600 font-medium">{lawyer.fee.startsWith('₹') ? lawyer.fee : `₹${lawyer.fee}`}</p>}
                               </div>
                             </div>
                             <Link

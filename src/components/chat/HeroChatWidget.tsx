@@ -62,7 +62,7 @@ export default function HeroChatWidget() {
           messages: nextMessages.map(m => ({
             role: m.role,
             content: m.role === 'model' && m.lawyers?.length
-              ? m.content + `\n[Lawyers shown to client — use this to answer follow-up questions:\n${m.lawyers.map((l: Lawyer) => `- ${l.name}: fee ₹${l.fee ?? 'N/A'}, rating ${l.rating ?? 'N/A'}/5, ${l.yearsExperience != null ? `${l.yearsExperience} yrs experience` : ''}, ${l.casesHandled != null ? `${l.casesHandled} cases handled` : ''}, ${l.successRate != null ? `${l.successRate}% success rate` : ''}, location: ${l.location}, practice: ${l.practiceAreas?.join('/')}`).join('\n')}]`
+              ? m.content + `\n[Lawyers shown to client — use this to answer follow-up questions:\n${m.lawyers.map((l: Lawyer) => `- ${l.name}: fee ${l.fee ?? 'N/A'}, rating ${l.rating ?? 'N/A'}/5, ${l.yearsExperience != null ? `${l.yearsExperience} yrs experience` : ''}, ${l.casesHandled != null ? `${l.casesHandled} cases handled` : ''}, ${l.successRate != null ? `${l.successRate}% success rate` : ''}, location: ${l.location}, practice: ${l.practiceAreas?.join('/')}`).join('\n')}]`
               : m.content,
           })),
         }),
@@ -244,7 +244,7 @@ export default function HeroChatWidget() {
                               <div className="flex-1 min-w-0">
                                 <p className="font-semibold text-gray-900 text-[11px] truncate">{lawyer.name}</p>
                                 <p className="text-[10px] text-gray-500 truncate">{lawyer.practiceAreas?.[0]}</p>
-                                {lawyer.fee && <p className="text-[10px] text-blue-600 font-medium">₹{lawyer.fee}</p>}
+                                {lawyer.fee && <p className="text-[10px] text-blue-600 font-medium">{lawyer.fee.startsWith('₹') ? lawyer.fee : `₹${lawyer.fee}`}</p>}
                               </div>
                               <Link href={`/lawyers/${lawyer.id}`} className="bg-blue-600 text-white text-[10px] font-semibold px-2 py-1 rounded-md hover:bg-blue-700 shrink-0">
                                 View
