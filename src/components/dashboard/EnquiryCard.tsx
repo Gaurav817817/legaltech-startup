@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Phone, Mail } from 'lucide-react'
+import { Phone, Mail, MessageSquare } from 'lucide-react'
+import Link from 'next/link'
 import { updateEnquiryStatus } from '@/app/dashboard/actions'
 
 interface Enquiry {
@@ -68,7 +69,13 @@ export default function EnquiryCard({ enquiry }: { enquiry: Enquiry }) {
         </span>
       </div>
 
-      <div className="mt-3 flex items-center gap-2">
+      <div className="mt-3 flex items-center gap-2 flex-wrap">
+        <Link
+          href={`/conversation/${enquiry.id}`}
+          className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 border border-blue-200 hover:border-blue-400 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-all"
+        >
+          <MessageSquare className="w-3.5 h-3.5" /> Open Chat
+        </Link>
         {status === 'pending' && (
           <button
             onClick={() => update('active')}

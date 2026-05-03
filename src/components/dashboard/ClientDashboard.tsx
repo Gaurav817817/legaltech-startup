@@ -2,6 +2,7 @@ import { MessageSquare, Search, ArrowRight, Clock, CheckCircle2, XCircle } from 
 import Link from 'next/link'
 import ReminderButton from './ReminderButton'
 
+
 interface ConsultationRequest {
   id: string
   lawyerId: string
@@ -109,6 +110,12 @@ export default function ClientDashboard({
                           <span className={`flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border ${cfg.color}`}>
                             <StatusIcon className="w-3 h-3" /> {cfg.label}
                           </span>
+                          <Link
+                            href={`/conversation/${req.id}`}
+                            className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 border border-blue-200 hover:border-blue-400 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-all"
+                          >
+                            <MessageSquare className="w-3.5 h-3.5" /> Open Chat
+                          </Link>
                           {req.status !== 'closed' && (
                             <ReminderButton requestId={req.id} canSend={req.canSendReminder} />
                           )}
