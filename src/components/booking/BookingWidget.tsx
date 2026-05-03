@@ -53,6 +53,11 @@ export default function BookingWidget({ lawyer }: { lawyer: any }) {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
+              user_email: userEmail,
+              user_name: userName,
+              lawyer_name: lawyer.name,
+              slot: selectedSlot,
+              amount: numericFee,
             }),
           });
           const verifyData = await verifyRes.json();

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
+import { sendApprovalNotification } from '@/lib/resend'
 
 const ADMIN_EMAIL = 'founders@amiquz.com'
 
@@ -18,6 +19,30 @@ export async function setLawyerApproval(id: string, approved: boolean) {
     .eq('id', id)
 
   if (error) throw new Error(error.message)
+
+  // Notify the lawyer when their profile is approved
+  if (approved) {
+    try {
+      const admin = createServiceClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        { auth: { autoRefreshToken: false, persistSession: false } }
+      )
+      const [{ data: { user: lawyer } }, { data: profile }] = await Promise.all([
+        admin.auth.admin.getUserById(id),
+        admin.from('lawyer_profiles').select('first_name, last_name').eq('id', id).single(),
+      ])
+      if (lawyer?.email && profile) {
+        await sendApprovalNotification({
+          lawyerEmail: lawyer.email,
+          lawyerName: `${profile.first_name} ${profile.last_name}`,
+          lawyerId: id,
+        })
+      }
+    } catch (err) {
+      console.error('Approval email failed (non-blocking):', err)
+    }
+  }
 
   revalidatePath('/admin')
   revalidatePath('/search')

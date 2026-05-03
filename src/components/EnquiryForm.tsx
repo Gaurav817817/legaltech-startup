@@ -36,6 +36,7 @@ export default function EnquiryForm({ lawyerId, lawyerName }: { lawyerId: string
       <p className="text-xs text-gray-500 mb-4">Describe your issue and {lawyerName} will reach out to you.</p>
 
       <form onSubmit={handleSubmit} className="space-y-3">
+        <input type="hidden" name="lawyer_name" value={lawyerName} />
         <div>
           <input
             name="client_name"
