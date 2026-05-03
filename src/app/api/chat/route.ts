@@ -173,9 +173,14 @@ export async function POST(req: Request) {
   const rawText = completion.choices[0].message.content ?? ''
   let { cleanText, matchData } = extractMatchData(rawText)
 
-  // Strip fake numbered lawyer lists: "1. Name — role" or "1. Name - role"
-  // The dash-after-name pattern only appears in fake lawyer lists, not in the options menu
-  cleanText = cleanText.replace(/^\d+\.\s+.+\s[—–-]\s.+(\n|$)/gm, '').trim()
+  // When the AI produced a recommendation block, strip ALL numbered lists from cleanText —
+  // they are always fake lawyer lists. The options menu never co-occurs with MATCH_DATA.
+  if (matchData) {
+    cleanText = cleanText.replace(/^\d+\.\s+.+(\n|$)/gm, '').trim()
+  } else {
+    // Outside recommendation context, only strip lines with a dash separator (fake lawyer format)
+    cleanText = cleanText.replace(/^\d+\.\s+.+\s[—–-]\s.+(\n|$)/gm, '').trim()
+  }
 
   // Guard: if the model still snuck a question into the closing message, strip it
   if (matchData?.ready_to_match && cleanText.includes('?')) {
