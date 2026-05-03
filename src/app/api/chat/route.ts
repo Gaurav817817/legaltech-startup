@@ -196,26 +196,32 @@ export async function POST(req: Request) {
 
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
-  const history = await buildMessageHistory(groq, messages)
-
-  const completion = await groq.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
-    response_format: { type: 'json_object' },
-    messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
-      ...history,
-    ],
-  })
-
   let reply = ''
   let matchData: Record<string, any> | null = null
 
   try {
+    const history = await buildMessageHistory(groq, messages)
+
+    const completion = await groq.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        ...history,
+      ],
+    })
+
     const parsed = JSON.parse(completion.choices[0].message.content ?? '{}')
     reply = parsed.reply ?? ''
     matchData = parsed.match ?? null
-  } catch {
-    reply = 'Something went wrong. Please try again.'
+  } catch (err: any) {
+    const status = err?.status ?? err?.statusCode
+    if (status === 429) {
+      reply = "I'm getting a lot of requests right now — please try again in a moment."
+    } else {
+      reply = 'Something went wrong on our end. Please try again.'
+    }
+    return Response.json({ reply, ready_to_match: false, lawyers: null })
   }
 
   const VAGUE_VALUES = ['unknown', 'unclear', 'not specified', 'none', 'general', 'various', "don't know", 'unspecified']
