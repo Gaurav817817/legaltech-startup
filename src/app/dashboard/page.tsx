@@ -22,8 +22,8 @@ export default async function DashboardPage() {
     if (!profile) redirect('/lawyer-profile-setup')
 
     const { data: enquiries } = await supabase
-      .from('enquiries')
-      .select('*')
+      .from('consultation_requests')
+      .select('id, client_name, client_phone, client_email, issue_summary, status, created_at')
       .eq('lawyer_id', user.id)
       .order('created_at', { ascending: false })
 

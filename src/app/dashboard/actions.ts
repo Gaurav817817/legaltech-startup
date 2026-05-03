@@ -11,7 +11,7 @@ export async function updateEnquiryStatus(id: string, status: string) {
   if (!user) throw new Error('Unauthorized')
 
   const { error } = await supabase
-    .from('enquiries')
+    .from('consultation_requests')
     .update({ status })
     .eq('id', id)
     .eq('lawyer_id', user.id)
