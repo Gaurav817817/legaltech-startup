@@ -56,12 +56,12 @@ Meta-comment ("you didn't reply", "i said hi", "stop repeating"):
    FOLLOW-UP: Once you have issue type + location + urgency → proceed to recommendation.
    If still missing pieces → ask one more focused question.
 
-   URGENCY FAST-TRACK: If user mentions physical harm, police, arrest, court date, or imminent deadline → skip the urgency question only. You still MUST ask for their city or state if not yet known. Location is always required before recommending.
+   URGENCY FAST-TRACK: If user mentions physical harm, police, arrest, court date, or imminent deadline → skip the urgency question only. You MUST still ask for their specific city or state in India (e.g. "Mumbai", "Delhi", "Bangalore"). Never accept "India" as a location — it is too broad. If location is not yet known, ask exactly: "Which city or state in India are you in?"
 
 ━━━ RECOMMENDATION GATE ━━━
 Only output <<<MATCH_DATA>>> with ready_to_match:true when ALL of the following are true:
 ✓ Clear specific legal issue is known
-✓ City or state in India is known
+✓ Specific city or state in India is known (NOT just "India" — must be a city or state like Mumbai, Delhi, Punjab etc.)
 ✓ User wants a lawyer (has not said otherwise)
 ✓ At least one clarifying question has been asked (do not match on the very first reply)
 
@@ -82,7 +82,7 @@ Output this block only once, only when all gate conditions are met.
 - Never repeat a question already answered
 - Never mention AI, models, or technology
 - NEVER write a numbered or bulleted list of lawyer names — not even as examples. The platform shows real verified lawyers. Writing "1. Lawyer A", "2. Lawyer B" etc. is strictly forbidden.
-- NEVER trigger ready_to_match:true unless you know the user's city or state. If location is unknown, ask for it first.`
+- NEVER trigger ready_to_match:true unless you know the user's specific city or state. "India" is NOT a valid location value — always ask "Which city or state in India are you in?" if you only know the country.`
 
 function extractMatchData(text: string): { cleanText: string; matchData: Record<string, any> | null } {
   // Find the marker regardless of how many < > the LLM used (1-5) or extra spaces
@@ -108,7 +108,9 @@ function extractMatchData(text: string): { cleanText: string; matchData: Record<
 
 async function findMatchingLawyers(matchData: Record<string, any>) {
   const supabase = await createClient()
-  const { practice_area, location } = matchData
+  const { location } = matchData
+  // AI sometimes returns compound values like "Criminal Law, NDPS Act" — use first term only
+  const practice_area = matchData.practice_area?.split(',')[0].trim()
 
   let queryBuilder = supabase
     .from('lawyer_profiles')
@@ -171,9 +173,9 @@ export async function POST(req: Request) {
   const rawText = completion.choices[0].message.content ?? ''
   let { cleanText, matchData } = extractMatchData(rawText)
 
-  // Strip fake numbered lawyer lists — identified by em/en dash after the name
-  // e.g. "1. Lawyer A — specializes in..." — never appears in the options menu
-  cleanText = cleanText.replace(/^\d+\.\s+.+[—–].+(\n|$)/gm, '').trim()
+  // Strip fake numbered lawyer lists: "1. Name — role" or "1. Name - role"
+  // The dash-after-name pattern only appears in fake lawyer lists, not in the options menu
+  cleanText = cleanText.replace(/^\d+\.\s+.+\s[—–-]\s.+(\n|$)/gm, '').trim()
 
   // Guard: if the model still snuck a question into the closing message, strip it
   if (matchData?.ready_to_match && cleanText.includes('?')) {
@@ -186,10 +188,13 @@ export async function POST(req: Request) {
 
   // Server-side guard: don't show lawyers if the AI produced a match with no real data
   const VAGUE_VALUES = ['unknown', 'unclear', 'not specified', 'none', 'general', 'various', "don't know", 'unspecified']
+  const COUNTRY_LEVEL = ['india'] // city/state required, country alone is too broad
   const isVaguePracticeArea = !matchData?.practice_area ||
     VAGUE_VALUES.some(v => matchData.practice_area.toLowerCase().includes(v))
+  const locationLower = matchData?.location?.toLowerCase() ?? ''
   const isVagueLocation = !matchData?.location ||
-    VAGUE_VALUES.some(v => matchData.location.toLowerCase().includes(v))
+    VAGUE_VALUES.some(v => locationLower.includes(v)) ||
+    COUNTRY_LEVEL.some(c => locationLower.trim() === c)
 
   let lawyers = null
   if (matchData?.ready_to_match && !isVaguePracticeArea && !isVagueLocation) {
