@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { Search, MapPin, Sparkles, Star, ShieldCheck, CheckCircle2, Scale, Clock, Users, ArrowRight, MessageSquare, CalendarCheck, BadgeCheck } from 'lucide-react';
 import HeroChatWidget from '@/components/chat/DynamicChatWidget';
-import LegalTicker from '@/components/LegalTicker';
 
 export default function Home() {
   return (
@@ -206,9 +205,6 @@ export default function Home() {
 
         </div>
       </section>
-
-      {/* Legal Pulse Ticker */}
-      <LegalTicker />
 
       {/* How It Works */}
       <section className="bg-white py-20 px-4 sm:px-6 lg:px-8">
