@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { ArrowLeft, Send, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
@@ -39,7 +39,7 @@ export default function ConversationView({
   const [body, setBody] = useState('')
   const [sending, setSending] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   const otherName = isClient ? lawyerName : clientName
 
