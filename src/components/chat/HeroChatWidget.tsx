@@ -68,6 +68,9 @@ export default function HeroChatWidget() {
         }),
       })
       const { reply, ready_to_match, lawyers } = await res.json()
+      if (ready_to_match && lawyers?.length) {
+        localStorage.setItem('amiquz_chat_issue', content)
+      }
       setMessages(prev => [...prev, {
         id: crypto.randomUUID(),
         role: 'model',

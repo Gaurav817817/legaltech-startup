@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Star, CheckCircle, Loader2, MessageSquare,
   Phone, Calendar, Shield, Lock, LogIn, UserPlus,
@@ -28,6 +28,17 @@ export default function LawyerContactSidebar({ lawyer, prefillIssue, isAuthentic
   const [tab, setTab] = useState<Tab>('enquiry')
   const [formState, setFormState] = useState<FormState>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const [issueText, setIssueText] = useState(prefillIssue ?? '')
+
+  useEffect(() => {
+    if (!prefillIssue && isAuthenticated) {
+      const saved = localStorage.getItem('amiquz_chat_issue')
+      if (saved) {
+        setIssueText(saved)
+        localStorage.removeItem('amiquz_chat_issue')
+      }
+    }
+  }, [prefillIssue, isAuthenticated])
 
   const hasRazorpay = !!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID
   const rawFee = lawyer.consultationFee
@@ -166,7 +177,8 @@ export default function LawyerContactSidebar({ lawyer, prefillIssue, isAuthentic
                 name="issue_description"
                 required
                 rows={3}
-                defaultValue={prefillIssue ?? ''}
+                value={issueText}
+                onChange={(e) => setIssueText(e.target.value)}
                 placeholder="Briefly describe your legal issue…"
                 className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-gray-50 focus:bg-white transition-colors resize-none"
               />
