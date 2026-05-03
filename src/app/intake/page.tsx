@@ -14,6 +14,9 @@ interface Lawyer {
   location: string
   fee: string
   image: string | null
+  yearsExperience?: number
+  casesHandled?: number
+  successRate?: number
 }
 
 interface Message {
@@ -79,7 +82,7 @@ export default function IntakeChatPage() {
           messages: nextMessages.map(m => ({
             role: m.role,
             content: m.role === 'model' && m.lawyers?.length
-              ? m.content + `\n[Lawyers shown: ${m.lawyers.map((l: Lawyer) => `${l.name}${l.fee ? ` (₹${l.fee})` : ''}`).join(', ')}]`
+              ? m.content + `\n[Lawyers shown to client — use this to answer follow-up questions:\n${m.lawyers.map((l: Lawyer) => `- ${l.name}: fee ₹${l.fee ?? 'N/A'}, rating ${l.rating ?? 'N/A'}/5, ${l.yearsExperience != null ? `${l.yearsExperience} yrs experience` : ''}, ${l.casesHandled != null ? `${l.casesHandled} cases handled` : ''}, ${l.successRate != null ? `${l.successRate}% success rate` : ''}, location: ${l.location}, practice: ${l.practiceAreas?.join('/')}`).join('\n')}]`
               : m.content,
           })),
         }),

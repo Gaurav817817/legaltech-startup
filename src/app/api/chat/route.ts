@@ -140,7 +140,7 @@ async function findMatchingLawyers(matchData: Record<string, any>) {
   // Practice area relevance is handled entirely by the scoring below.
   let queryBuilder = supabase
     .from('lawyer_profiles')
-    .select('id, first_name, last_name, practice_areas, rating, location, consultation_fee, image_url')
+    .select('id, first_name, last_name, practice_areas, rating, location, consultation_fee, image_url, years_experience, cases_handled, success_rate')
     .eq('approved', true)
     .order('rating', { ascending: false })
 
@@ -175,6 +175,9 @@ async function findMatchingLawyers(matchData: Record<string, any>) {
         location: lawyer.location,
         fee: lawyer.consultation_fee,
         image: lawyer.image_url,
+        yearsExperience: lawyer.years_experience,
+        casesHandled: lawyer.cases_handled,
+        successRate: lawyer.success_rate,
         score,
       }
     })
