@@ -9,7 +9,7 @@ interface Message {
   id: string
   request_id: string
   sender_id: string
-  body: string
+  content: string
   created_at: string
 }
 
@@ -91,15 +91,15 @@ export default function ConversationView({
       id: crypto.randomUUID(),
       request_id: requestId,
       sender_id: currentUserId,
-      body: trimmed,
+      content: trimmed,
       created_at: new Date().toISOString(),
     }
     setMessages(prev => [...prev, optimistic])
 
     const { data, error } = await supabase
       .from('messages')
-      .insert({ request_id: requestId, sender_id: currentUserId, body: trimmed })
-      .select('id, request_id, sender_id, body, created_at')
+      .insert({ request_id: requestId, sender_id: currentUserId, content: trimmed })
+      .select('id, request_id, sender_id, content, created_at')
       .single()
 
     if (!error && data) {
@@ -159,7 +159,7 @@ export default function ConversationView({
                         : 'bg-gray-100 text-gray-800 rounded-bl-sm'
                     }`}
                   >
-                    {msg.body}
+                    {msg.content}
                   </div>
                   <span className="text-[11px] text-gray-400 px-1">
                     {new Date(msg.created_at).toLocaleTimeString('en-IN', {

@@ -6,7 +6,7 @@ interface Message {
   id: string
   request_id: string
   sender_id: string
-  body: string
+  content: string
   created_at: string
 }
 
@@ -49,7 +49,7 @@ export default async function ConversationPage({
   // Fetch initial message history
   const { data: initialMessages } = await supabase
     .from('messages')
-    .select('id, request_id, sender_id, body, created_at')
+    .select('id, request_id, sender_id, content, created_at')
     .eq('request_id', requestId)
     .order('created_at', { ascending: true })
 
