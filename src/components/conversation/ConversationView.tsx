@@ -98,7 +98,12 @@ export default function ConversationView({
 
     const { data, error } = await supabase
       .from('messages')
-      .insert({ request_id: requestId, sender_id: currentUserId, content: trimmed })
+      .insert({
+        request_id: requestId,
+        sender_id: currentUserId,
+        content: trimmed,
+        sender_role: isClient ? 'client' : 'lawyer',
+      })
       .select('id, request_id, sender_id, content, created_at')
       .single()
 
