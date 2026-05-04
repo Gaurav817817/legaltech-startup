@@ -38,6 +38,7 @@ export default function ConversationView({
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [body, setBody] = useState('')
   const [sending, setSending] = useState(false)
+  const [sendError, setSendError] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const supabase = useMemo(() => createClient(), [])
 
@@ -83,6 +84,7 @@ export default function ConversationView({
 
     setSending(true)
     setBody('')
+    setSendError(null)
 
     // Optimistic insert
     const optimistic: Message = {
@@ -107,6 +109,7 @@ export default function ConversationView({
       // Rollback
       setMessages(prev => prev.filter(m => m.id !== optimistic.id))
       setBody(trimmed)
+      setSendError(error.message)
     }
 
     setSending(false)
@@ -178,6 +181,10 @@ export default function ConversationView({
           This enquiry is closed. Reopen it from your dashboard to send messages.
         </div>
       ) : (
+        <>
+        {sendError && (
+          <p className="mt-2 text-xs text-red-500 text-center">{sendError}</p>
+        )}
         <form onSubmit={handleSend} className="mt-3 flex gap-2 shrink-0">
           <input
             type="text"
@@ -195,6 +202,7 @@ export default function ConversationView({
             <Send className="w-4 h-4" />
           </button>
         </form>
+        </>
       )}
     </div>
   )
